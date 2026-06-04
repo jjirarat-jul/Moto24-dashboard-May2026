@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โมโต24 — Executive Dashboard | พฤษภาคม 2569</title>
+<script>
+window.__onChart=function(){if(window.Chart&&window.drawCharts&&!window.__drawn){window.__drawn=1;window.drawCharts();}};
+(function(){var c=['https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js','https://unpkg.com/chart.js@4.4.1/dist/chart.umd.min.js'];var i=0;function L(){if(i>=c.length){return;}var s=document.createElement('script');s.src=c[i++];s.onload=window.__onChart;s.onerror=L;document.head.appendChild(s);}L();})();
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+  :root{
+    --bg:#0f1115; --panel:#181b22; --panel2:#1f2430; --line:#2a2f3a;
+    --txt:#e8eaed; --muted:#9aa3b2; --red:#e23b46; --reddk:#b01f2c;
+    --grn:#34c77b; --amb:#f0a93b; --blu:#4d9fff; --vio:#9b8cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Prompt',sans-serif;background:var(--bg);color:var(--txt);padding:28px;line-height:1.45}
+  .wrap{max-width:1280px;margin:0 auto}
+  header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:2px solid var(--red);padding-bottom:18px;margin-bottom:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{height:54px;padding:0 15px;border-radius:13px;background:#2e3192;display:flex;align-items:center;font-weight:700;font-size:23px;letter-spacing:.3px;box-shadow:0 4px 14px rgba(46,49,146,.42);line-height:1}
+  .logo .w{color:#fff}
+  .logo .o{color:#f37021}
+  h1{font-size:23px;font-weight:600;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px}
+  .period{text-align:right}
+  .period .m{font-size:20px;font-weight:600;color:var(--red)}
+  .period .s{font-size:12px;color:var(--muted)}
+  /* toggle */
+  .toggle{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:5px;gap:5px;margin-bottom:8px}
+  .toggle button{font-family:'Prompt';font-size:14px;font-weight:600;color:var(--muted);background:transparent;border:none;padding:9px 22px;border-radius:9px;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:8px}
+  .toggle button.active{background:linear-gradient(135deg,var(--red),var(--reddk));color:#fff;box-shadow:0 3px 10px rgba(226,59,70,.3)}
+  .toggle button:not(.active):hover{color:var(--txt);background:var(--panel2)}
+  .view{display:none;animation:fade .25s ease}
+  .view.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .section-title{font-size:15px;font-weight:600;margin:26px 0 14px;display:flex;align-items:center;gap:9px;color:var(--txt)}
+  .section-title::before{content:'';width:4px;height:18px;background:var(--red);border-radius:3px}
+  .section-title small{color:var(--muted);font-weight:400;font-size:12px}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:13px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px;position:relative;overflow:hidden}
+  .kpi .lbl{font-size:11.5px;color:var(--muted);font-weight:400}
+  .kpi .val{font-size:23px;font-weight:600;margin-top:6px}
+  .kpi .meta{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .kpi .tag{position:absolute;top:13px;right:13px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+  .tag.up{background:rgba(52,199,123,.14);color:var(--grn)}
+  .tag.dn{background:rgba(226,59,70,.16);color:var(--red)}
+  .tag.nt{background:rgba(154,163,178,.14);color:var(--muted)}
+  .dist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .dist{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .dist h3{font-size:16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+  .dist h3 .pct{font-size:15px;font-weight:600;padding:2px 10px;border-radius:20px}
+  .pbar{height:8px;background:var(--panel2);border-radius:6px;margin:12px 0 6px;overflow:hidden}
+  .pbar i{display:block;height:100%;border-radius:6px}
+  .dist .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);padding:5px 0;border-bottom:1px dashed var(--line)}
+  .dist .row:last-child{border-bottom:none}
+  .dist .row b{color:var(--txt);font-weight:500}
+  .charts{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .card h4{font-size:13.5px;font-weight:600;margin-bottom:12px;color:var(--muted)}
+  .tbl-wrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 11px;text-align:right;white-space:nowrap}
+  th{background:var(--panel2);color:var(--muted);font-weight:500;font-size:11.5px;position:sticky;top:0}
+  td:first-child,th:first-child{text-align:left;position:sticky;left:0}
+  th:first-child{background:var(--panel2)}
+  td.name{font-weight:500;background:var(--panel)}
+  tr.dist-row td{background:var(--panel2);font-weight:600;color:var(--txt);border-top:2px solid var(--red)}
+  tr:hover td{background:var(--panel2)}
+  tr.dist-row:hover td{background:var(--panel2)}
+  .pill{display:inline-block;min-width:54px;padding:2px 8px;border-radius:20px;font-weight:600;font-size:11.5px}
+  .p-good{background:rgba(52,199,123,.16);color:var(--grn)}
+  .p-mid{background:rgba(240,169,59,.16);color:var(--amb)}
+  .p-bad{background:rgba(226,59,70,.18);color:var(--red)}
+  .neg{color:var(--red)}
+  .pos{color:var(--grn)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:10px 2px 0}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:11.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  @media(max-width:1080px){.kpis{grid-template-columns:repeat(3,1fr)}.dist-grid{grid-template-columns:1fr}.charts{grid-template-columns:1fr}}
+  @media print{body{background:#fff;color:#111;padding:0}.toggle{display:none}.view{display:block!important}.card,.kpi,.dist,.tbl-wrap{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo"><span class="w">โมโต</span><span class="o">24</span></div>
+      <div>
+        <h1>โมโต24 — รายงานผู้บริหาร</h1>
+        <div class="sub">สรุปผลการดำเนินงานรายเขต / รายสาขา</div>
+      </div>
+    </div>
+    <div class="period">
+      <div class="m">พฤษภาคม 2569</div>
+      <div class="s">May 2026 · 21 สาขา · 3 เขต</div>
+    </div>
+  </header>
+
+  <div class="toggle">
+    <button id="btnSale" class="active" onclick="show('sale')">📈 ส่วนขาย</button>
+    <button id="btnDebt" onclick="show('debt')">💰 ส่วนเก็บหนี้</button>
+  </div>
+
+  <!-- ============ SALES VIEW ============ -->
+  <div id="vSale" class="view show">
+    <div class="section-title">ภาพรวมยอดขาย <small>โมโต24 (รวมทุกเขต)</small></div>
+    <div class="kpis" id="kSale" style="grid-template-columns:repeat(4,1fr)"></div>
+
+    <div class="card" style="margin-top:14px;display:flex;align-items:center;justify-content:space-around;gap:8px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:11.5px;color:var(--muted)">ลูกค้าเป้าหมาย</div><div style="font-size:26px;font-weight:600">693</div></div>
+      <div style="text-align:center;color:var(--muted)"><div style="font-size:11px">ผ่านเช็คเกอร์</div><div style="font-size:16px;font-weight:600;color:var(--amb)">44.0% ▸</div></div>
+      <div style="text-align:center"><div style="font-size:11.5px;color:var(--muted)">เช็คเกอร์ผ่าน</div><div style="font-size:26px;font-weight:600;color:var(--blu)">305</div></div>
+      <div style="text-align:center;color:var(--muted)"><div style="font-size:11px">ปิดการขาย</div><div style="font-size:16px;font-weight:600;color:var(--grn)">76.39% ▸</div></div>
+      <div style="text-align:center"><div style="font-size:11.5px;color:var(--muted)">ยอดขายจริง</div><div style="font-size:26px;font-weight:600;color:var(--grn)">233</div></div>
+    </div>
+
+    <div class="section-title">เปรียบเทียบรายเขต <small>ยอดขายรถใหม่ · เป้า vs ทำได้</small></div>
+    <div class="dist-grid" id="dSale"></div>
+
+    <div class="charts">
+      <div class="card">
+        <h4>ยอดขายรถใหม่รายสาขา — เป้า vs ทำได้ (คัน)</h4>
+        <canvas id="branchBar" height="150"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:#3a4150"></i> เป้าขาย</span>
+          <span><i class="dot" style="background:var(--grn)"></i> ≥100%</span>
+          <span><i class="dot" style="background:var(--amb)"></i> 80–99%</span>
+          <span><i class="dot" style="background:var(--red)"></i> &lt;80%</span>
+        </div>
+      </div>
+      <div class="card">
+        <h4>สัดส่วนยอดขายรถใหม่ตามเขต (คัน)</h4>
+        <canvas id="distPie" height="150"></canvas>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h4>ยอดขาย เทียบ ลูกค้าเป้าหมาย &amp; เช็คเกอร์ผ่าน (รายสาขา · คัน)</h4>
+      <canvas id="funnelBar" height="95"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:#3a4150"></i> ลูกค้าเป้าหมาย</span>
+        <span><i class="dot" style="background:#4d9fff"></i> เช็คเกอร์ผ่าน</span>
+        <span><i class="dot" style="background:#34c77b"></i> ยอดขายจริง</span>
+      </div>
+      <div class="legend"><span style="color:var(--muted)">* ขาย/ผ่าน = ยอดขาย ÷ เช็คเกอร์ผ่าน (ทุกสาขา ≤100% — เช็คเกอร์ผ่าน ≥ ยอดขาย)</span></div>
+    </div>
+
+    <div class="section-title">รายสาขา — ยอดขายรถใหม่ <small>เรียงตามเขต · GR.5ด.=เติบโตเทียบเฉลี่ย 5 เดือน · เฉลี่ย/เดือน=ยอดขายเฉลี่ยต่อเดือน · ดบ.=ดอกเบี้ยที่แท้จริง</small></div>
+    <div class="tbl-wrap" style="overflow-x:auto"><table id="tblNew"></table></div>
+
+    <div class="section-title">รายสาขา — จำนำเล่ม &amp; ศูนย์บริการ</div>
+    <div class="tbl-wrap" style="overflow-x:auto"><table id="tblFin"></table></div>
+
+    <div class="section-title">รายการรับรถ <small>สต็อกรถใหม่รายรุ่น · รับ / ขาย / คงเหลือ (พ.ค. 2569) · สัดส่วน = คงเหลือ ÷ ขาย</small></div>
+    <div class="charts" style="grid-template-columns:1.25fr 1fr">
+      <div class="card">
+        <h4>รับ · ขาย · คงเหลือ รายรุ่น (คัน)</h4>
+        <canvas id="stkBar" height="135"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:#3a4150"></i> รับ</span>
+          <span><i class="dot" style="background:#4d9fff"></i> ขาย</span>
+          <span><i class="dot" style="background:#f0a93b"></i> คงเหลือ</span>
+        </div>
+      </div>
+      <div class="card" style="padding:14px">
+        <h4>ตารางรายรุ่น</h4>
+        <div style="overflow-x:auto"><table id="tblStk"></table></div>
+        <div class="legend"><span style="color:var(--red)">▪ รุ่นตกรุ่น</span><span><i class="dot" style="background:var(--red)"></i> สัดส่วน ≥1 (สต็อกค้าง)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DEBT VIEW ============ -->
+  <div id="vDebt" class="view">
+    <div class="section-title">ภาพรวมการเก็บหนี้ <small>โมโต24 (รวมทุกเขต)</small></div>
+    <div class="kpis" id="kDebt" style="grid-template-columns:repeat(4,1fr)"></div>
+
+    <div class="section-title">เปรียบเทียบรายเขต <small>อัตราเก็บหนี้ (ขีดเส้น) &amp; รายได้</small></div>
+    <div class="dist-grid" id="dDebt"></div>
+
+    <div class="charts" style="grid-template-columns:1fr">
+      <div class="card">
+        <h4>อัตราเก็บหนี้ (ขีดเส้น) รายสาขา — ค่าเฉลี่ยบริษัท 92.67%</h4>
+        <canvas id="debtBar" height="90"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--grn)"></i> ≥95%</span>
+          <span><i class="dot" style="background:var(--amb)"></i> 90–95%</span>
+          <span><i class="dot" style="background:var(--red)"></i> &lt;90%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h4>เปรียบเทียบขีดเส้น 2568–2569 <span style="font-weight:400">· อัตราเก็บหนี้รายเดือน</span></h4>
+      <canvas id="ksTrend" height="105"></canvas>
+    </div>
+
+    <div class="section-title">รายสาขา — รายละเอียดการเก็บหนี้ <small>แยกตามกลุ่มงวด (รถใหม่ / ไฟแนนซ์)</small></div>
+    <div class="tbl-wrap" style="overflow-x:auto"><table id="tblDebt"></table></div>
+    <div class="legend">
+      <span style="margin-left:auto">ขีดเส้น = อัตราเก็บหนี้รวมตามเป้า · กลุ่มงวด 1-7 / 1-6 / 7-12 · รายได้ขีดเส้น = ดอกเบี้ย+ค่าธรรมเนียมที่เก็บได้</span>
+    </div>
+
+    <div class="section-title">สถานะหนี้ (คุณภาพพอร์ต) <small>หนี้ดี / หนี้เสี่ยง / หนี้เสีย · ม.ค.–พ.ค. 2569</small></div>
+    <div class="kpis" id="kStat"></div>
+    <div class="charts" style="margin-top:16px">
+      <div class="card">
+        <h4>หนี้ดี · หนี้เสี่ยง · หนี้เสีย (รายเดือน)</h4>
+        <canvas id="statBar" height="150"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:#2b3a8f"></i> หนี้ดี</span>
+          <span><i class="dot" style="background:#f0a93b"></i> หนี้เสี่ยง</span>
+          <span><i class="dot" style="background:#e23b46"></i> หนี้เสีย</span>
+        </div>
+      </div>
+      <div class="card">
+        <h4>%หนี้ดี รายเขต (รายเดือน)</h4>
+        <canvas id="zoneLine" height="150"></canvas>
+      </div>
+    </div>
+    <div class="charts" style="margin-top:16px">
+      <div class="card" style="padding:14px"><h4>สถานะหนี้รวม</h4><div style="overflow-x:auto"><table id="tblStat"></table></div></div>
+      <div class="card" style="padding:14px"><h4>หนี้ดี รายเขต</h4><div style="overflow-x:auto"><table id="tblZone"></table></div></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h4>วิเคราะห์สถานะหนี้</h4>
+      <div id="statAnalysis" style="font-size:13px;line-height:1.75"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div>แหล่งข้อมูล: Google Sheet “Data May 2026” → แท็บ Dashboard · ดึงข้อมูล ณ 2 มิ.ย. 2569</div>
+    <div>หน่วย: คัน / บาท / %</div>
+  </footer>
+
+</div>
+
+<script>
+/* ===== SALES DATA ===== */
+const G={na:233,nt:266,np:87.59,gr5:-5.30,avg:9.53,pl:1332000,plc:4510000,val:15770300,ir:1.71,ft:69,fa:35,fp:50.72,fval:833010,fir:2.11,st:257100,sa:278082,sp:108.16};
+const D=[
+ {b:"เขต 1",nt:98,na:87,np:88.78,gr5:-4.00,pl:533500,plc:1385500,val:5894300,ir:1.70,ft:27,fa:11,fval:285010,fir:1.85,st:87900,sa:98388,sp:111.93},
+ {b:"เขต 2",nt:87,na:57,np:65.52,gr5:-24.29,pl:141500,plc:556500,val:3897800,ir:1.74,ft:22,fa:19,fval:458000,fir:2.15,st:88800,sa:88642,sp:99.82},
+ {b:"เขต 3",nt:81,na:89,np:109.88,gr5:12.04,pl:657000,plc:2568000,val:5978200,ir:1.71,ft:20,fa:5,fval:90000,fir:2.54,st:80400,sa:91052,sp:113.25}
+];
+const B=[
+ {d:1,b:"15-บ่อล้อ",nt:15,na:6,np:40.00,gr5:-58.93,avg:4.60,pl:8000,plc:-68500,val:392000,ir:1.68,ft:4,fa:2,fp:50.00,fval:52010,fir:2.02,st:15100,sa:11860,sp:78.54},
+ {d:1,b:"18-หัวไทร",nt:13,na:4,np:30.77,gr5:-43.48,avg:5.20,pl:-16000,plc:-34500,val:278000,ir:1.81,ft:4,fa:1,fp:25.00,fval:32000,fir:1.78,st:11400,sa:11407,sp:100.06},
+ {d:1,b:"26-ปากพนัง",nt:10,na:12,np:120.00,gr5:135.29,avg:8.00,pl:68500,plc:98000,val:793000,ir:1.75,ft:4,fa:3,fp:75.00,fval:63000,fir:1.94,st:8100,sa:13805,sp:170.43},
+ {d:1,b:"27-สทิงพระ",nt:12,na:16,np:133.33,gr5:38.30,avg:13.00,pl:128000,plc:458000,val:1071000,ir:1.67,ft:3,fa:2,fp:66.67,fval:44000,fir:1.79,st:11400,sa:16324,sp:143.19},
+ {d:1,b:"29-ระโนด",nt:10,na:12,np:120.00,gr5:23.08,avg:9.60,pl:83000,plc:268500,val:771000,ir:1.71,ft:3,fa:2,fp:66.67,fval:33000,fir:1.68,st:8200,sa:9076,sp:110.68},
+ {d:1,b:"30-สิงหนคร",nt:12,na:10,np:83.33,gr5:-26.09,avg:6.80,pl:54000,plc:49000,val:722000,ir:1.76,ft:3,fa:0,fp:0.00,fval:32000,fir:1.71,st:11000,sa:9400,sp:85.45},
+ {d:1,b:"36-ควนหิน",nt:16,na:16,np:100.00,gr5:9.43,avg:11.60,pl:130500,plc:384000,val:1128900,ir:1.65,ft:3,fa:1,fp:33.33,fval:29000,fir:1.76,st:13100,sa:16131,sp:123.14},
+ {d:1,b:"37-บ้านด่าน",nt:10,na:11,np:110.00,gr5:-8.70,avg:8.40,pl:77500,plc:231000,val:738400,ir:1.67,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:9600,sa:10385,sp:108.18},
+ {d:2,b:"14-ร่อนพิบูลย์",nt:11,na:2,np:18.18,gr5:-34.78,avg:6.00,pl:-47000,plc:-7500,val:154000,ir:1.76,ft:4,fa:6,fp:150.00,fval:157000,fir:1.97,st:11200,sa:9105,sp:81.29},
+ {d:2,b:"16-ทุ่งใหญ่",nt:11,na:12,np:109.09,gr5:34.88,avg:11.60,pl:69500,plc:304500,val:850900,ir:1.78,ft:3,fa:1,fp:33.33,fval:32000,fir:1.78,st:13100,sa:20214,sp:154.31},
+ {d:2,b:"23-ชะอวด",nt:13,na:8,np:61.54,gr5:-48.28,avg:6.00,pl:24500,plc:3000,val:549000,ir:1.63,ft:3,fa:1,fp:33.33,fval:16000,fir:2.07,st:13600,sa:14449,sp:106.24},
+ {d:2,b:"24-นบพิตำ",nt:15,na:16,np:106.67,gr5:-26.23,avg:9.00,pl:137500,plc:263500,val:1027400,ir:1.80,ft:3,fa:4,fp:133.33,fval:128000,fir:1.84,st:15700,sa:13607,sp:86.67},
+ {d:2,b:"25-พิปูน",nt:14,na:2,np:14.29,gr5:-33.33,avg:7.60,pl:-36000,plc:151000,val:130000,ir:1.84,ft:3,fa:5,fp:166.67,fval:85000,fir:2.78,st:15200,sa:9894,sp:65.09},
+ {d:2,b:"31-ท่าศาลา",nt:12,na:8,np:66.67,gr5:-38.89,avg:6.60,pl:29000,plc:52000,val:539000,ir:1.65,ft:3,fa:2,fp:66.67,fval:40000,fir:1.93,st:12000,sa:12855,sp:107.13},
+ {d:2,b:"33-หัวถนน",nt:11,na:9,np:81.82,gr5:0.00,avg:6.20,pl:-36000,plc:-210000,val:647500,ir:1.75,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:8000,sa:8518,sp:106.48},
+ {d:3,b:"19-สตูล",nt:14,na:16,np:114.29,gr5:1.32,avg:15.40,pl:127500,plc:461500,val:1074900,ir:1.63,ft:4,fa:0,fp:0.00,fval:0,fir:null,st:14800,sa:15816,sp:106.86},
+ {d:3,b:"20-ฉลุง",nt:17,na:14,np:82.35,gr5:-10.13,avg:14.20,pl:98000,plc:487500,val:927700,ir:1.66,ft:3,fa:2,fp:66.67,fval:35000,fir:3.42,st:18800,sa:22872,sp:121.66},
+ {d:3,b:"21-ท่าแพ",nt:11,na:14,np:127.27,gr5:70.21,avg:16.00,pl:125500,plc:687000,val:940500,ir:1.65,ft:4,fa:2,fp:50.00,fval:45000,fir:1.98,st:10900,sa:12709,sp:116.60},
+ {d:3,b:"22-ละงู",nt:14,na:19,np:135.71,gr5:66.67,avg:17.00,pl:146000,plc:667000,val:1270900,ir:1.64,ft:3,fa:1,fp:33.33,fval:10000,fir:null,st:15200,sa:16468,sp:108.34},
+ {d:3,b:"28-ควนกาหลง",nt:13,na:10,np:76.92,gr5:-70.49,avg:3.60,pl:64000,plc:-81000,val:674300,ir:1.81,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:11500,sa:12540,sp:109.04},
+ {d:3,b:"32-รัตภูมิ",nt:12,na:16,np:133.33,gr5:60.47,avg:13.80,pl:96000,plc:346000,val:1089900,ir:1.95,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:9200,sa:10647,sp:115.73}
+];
+
+/* ===== DEBT DATA (ก = ขีดเส้น, ตามด้วยกลุ่มงวด รถใหม่/ไฟแนนซ์, inc = รายได้ขีดเส้น) ===== */
+const GD={ks:92.67,a7n:92.23,a7f:92.99,a6n:96.76,a6f:99.26,l712n:78.95,l712f:91.00,inc:8896634.95};
+const DD=[
+ {b:"เขต 1",ks:92.93,a7n:93.86,a7f:91.23,a6n:97.64,a6f:100.00,l712n:82.51,l712f:92.59,inc:2974819.02},
+ {b:"เขต 2",ks:92.84,a7n:90.41,a7f:90.77,a6n:94.54,a6f:98.08,l712n:84.44,l712f:88.89,inc:3367442.18},
+ {b:"เขต 3",ks:92.25,a7n:92.21,a7f:100.00,a6n:97.67,a6f:100.00,l712n:70.72,l712f:91.89,inc:2554373.75}
+];
+const BD={
+ "15-บ่อล้อ":{ks:90.34,a7n:86.96,a7f:73.33,a6n:95.24,a6f:100.00,l712n:86.89,l712f:85.71,inc:500436.44},
+ "18-หัวไทร":{ks:95.21,a7n:92.31,a7f:100.00,a6n:100.00,a6f:100.00,l712n:75.61,l712f:66.67,inc:387211.76},
+ "26-ปากพนัง":{ks:95.17,a7n:96.97,a7f:100.00,a6n:100.00,a6f:100.00,l712n:86.96,l712f:100.00,inc:298169.78},
+ "27-สทิงพระ":{ks:94.17,a7n:95.00,a7f:100.00,a6n:100.00,a6f:100.00,l712n:82.50,l712f:100.00,inc:436774.48},
+ "29-ระโนด":{ks:94.23,a7n:96.30,a7f:100.00,a6n:98.00,a6f:100.00,l712n:86.36,l712f:100.00,inc:303526.90},
+ "30-สิงหนคร":{ks:92.17,a7n:90.24,a7f:85.71,a6n:94.29,a6f:100.00,l712n:86.84,l712f:100.00,inc:335655.62},
+ "36-ควนหิน":{ks:92.35,a7n:97.14,a7f:null,a6n:98.33,a6f:null,l712n:74.14,l712f:null,inc:394241.45},
+ "37-บ้านด่าน":{ks:91.12,a7n:93.44,a7f:null,a6n:96.36,a6f:null,l712n:90.00,l712f:null,inc:318802.59},
+ "14-ร่อนพิบูลย์":{ks:90.50,a7n:87.80,a7f:91.67,a6n:91.43,a6f:100.00,l712n:89.29,l712f:78.57,inc:466975.35},
+ "16-ทุ่งใหญ่":{ks:95.56,a7n:94.29,a7f:85.71,a6n:96.55,a6f:100.00,l712n:91.67,l712f:100.00,inc:543548.60},
+ "23-ชะอวด":{ks:92.27,a7n:88.89,a7f:90.00,a6n:92.50,a6f:100.00,l712n:80.70,l712f:100.00,inc:434147.61},
+ "24-นบพิตำ":{ks:91.67,a7n:89.29,a7f:85.71,a6n:92.31,a6f:85.71,l712n:91.14,l712f:80.00,inc:641888.36},
+ "25-พิปูน":{ks:92.78,a7n:90.91,a7f:83.33,a6n:95.45,a6f:100.00,l712n:73.21,l712f:100.00,inc:613940.11},
+ "31-ท่าศาลา":{ks:95.50,a7n:97.87,a7f:100.00,a6n:100.00,a6f:100.00,l712n:84.31,l712f:100.00,inc:465978.92},
+ "33-หัวถนน":{ks:89.42,a7n:76.67,a7f:100.00,a6n:92.59,a6f:100.00,l712n:78.57,l712f:null,inc:200963.23},
+ "19-สตูล":{ks:92.57,a7n:92.31,a7f:100.00,a6n:100.00,a6f:100.00,l712n:71.43,l712f:90.91,inc:465705.66},
+ "20-ฉลุง":{ks:90.52,a7n:88.79,a7f:100.00,a6n:97.03,a6f:100.00,l712n:85.00,l712f:85.71,inc:619542.78},
+ "21-ท่าแพ":{ks:91.12,a7n:92.86,a7f:100.00,a6n:98.18,a6f:100.00,l712n:61.11,l712f:100.00,inc:396635.37},
+ "22-ละงู":{ks:96.07,a7n:95.50,a7f:100.00,a6n:97.94,a6f:100.00,l712n:84.42,l712f:100.00,inc:532354.12},
+ "28-ควนกาหลง":{ks:88.89,a7n:85.71,a7f:100.00,a6n:91.67,a6f:100.00,l712n:44.29,l712f:100.00,inc:238220.41},
+ "32-รัตภูมิ":{ks:92.12,a7n:93.15,a7f:100.00,a6n:96.55,a6f:100.00,l712n:65.00,l712f:100.00,inc:301915.41}
+};
+
+/* ===== FUNNEL: ลูกค้าเป้าหมาย → เช็คเกอร์ผ่าน → ขายจริง (cp = ขาย/ผ่าน %) ===== */
+const GF={lt:693,ck:305,cp:76.39};
+const DF=[{lt:271,ck:119,cp:73.11},{lt:221,ck:83,cp:68.67},{lt:201,ck:103,cp:86.41}];
+const FN={
+ "15-บ่อล้อ":{lt:22,ck:9,cp:66.67},"18-หัวไทร":{lt:24,ck:9,cp:44.44},"26-ปากพนัง":{lt:40,ck:18,cp:66.67},
+ "27-สทิงพระ":{lt:33,ck:18,cp:88.89},"29-ระโนด":{lt:43,ck:13,cp:92.31},"30-สิงหนคร":{lt:40,ck:14,cp:71.43},
+ "36-ควนหิน":{lt:35,ck:21,cp:76.19},"37-บ้านด่าน":{lt:34,ck:17,cp:64.71},"14-ร่อนพิบูลย์":{lt:29,ck:7,cp:28.57},
+ "16-ทุ่งใหญ่":{lt:27,ck:18,cp:66.67},"23-ชะอวด":{lt:29,ck:12,cp:66.67},"24-นบพิตำ":{lt:36,ck:17,cp:94.12},
+ "25-พิปูน":{lt:29,ck:2,cp:100.00},"31-ท่าศาลา":{lt:42,ck:13,cp:61.54},"33-หัวถนน":{lt:29,ck:14,cp:64.29},
+ "19-สตูล":{lt:38,ck:16,cp:100.00},"20-ฉลุง":{lt:38,ck:14,cp:100.00},"21-ท่าแพ":{lt:21,ck:14,cp:100.00},
+ "22-ละงู":{lt:36,ck:19,cp:100.00},"28-ควนกาหลง":{lt:38,ck:20,cp:50.00},"32-รัตภูมิ":{lt:30,ck:20,cp:80.00}
+};
+
+/* ===== รายการรับรถ (สต็อกรถใหม่รายรุ่น · สัดส่วน = คงเหลือ ÷ ขาย) ===== */
+const STK={tot:{r:257,s:233,bal:127,prop:0.55},rows:[
+ {m:'WAVE110',r:146,s:139,bal:72,prop:0.52},
+ {m:'Wave125',r:33,s:31,bal:5,prop:0.16},
+ {m:'Scoopy',r:40,s:31,bal:25,prop:0.81},
+ {m:'CLUB12',r:10,s:12,bal:3,prop:0.25},
+ {m:'LEAD 125',r:25,s:16,bal:15,prop:0.94},
+ {m:'GIORNO',r:2,s:2,bal:null,prop:0.00},
+ {m:'CRF300L',r:1,s:null,bal:1,prop:null},
+ {m:'Scoopy I (ตกรุ่น)',r:null,s:1,bal:2,prop:2.00,old:true},
+ {m:'CLUB 12 (ตกรุ่น)',r:null,s:1,bal:4,prop:4.00,old:true}
+]};
+
+/* ===== สถานะหนี้ (คุณภาพพอร์ต) ม.ค.–พ.ค. 2569 ===== */
+const M5=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.'];
+const SGOOD=[82.83,82.75,82.41,82.21,81.48];
+const SRISK=[5.21,5.16,5.16,4.51,4.93];
+const SBAD=[11.96,12.09,12.56,13.28,13.59];
+const Z1=[88.16,88.24,88.08,88.18,87.87];
+const Z2=[83.94,83.75,83.50,83.11,82.09];
+const Z3=[77.03,76.94,76.45,76.25,75.44];
+
+/* helpers */
+const fmt=n=>n==null?"–":n.toLocaleString('en-US');
+const fmtB=n=>n==null?"–":(Math.abs(n)>=1e6?(n/1e6).toFixed(2)+"M":Math.round(n).toLocaleString('en-US'));
+const pctCls=p=>p>=100?'p-good':(p>=80?'p-mid':'p-bad');
+const colCls=p=>p==null?'':(p>=95?'p-good':(p>=90?'p-mid':'p-bad'));
+const signCls=n=>n<0?'neg':(n>0?'pos':'');
+const arrow=n=>n>0?'▲':(n<0?'▼':'');
+const P=v=>v==null?'–':v+'%';
+
+/* toggle */
+function show(v){
+  document.getElementById('vSale').classList.toggle('show',v==='sale');
+  document.getElementById('vDebt').classList.toggle('show',v==='debt');
+  document.getElementById('btnSale').classList.toggle('active',v==='sale');
+  document.getElementById('btnDebt').classList.toggle('active',v==='debt');
+}
+
+/* ===== SALES KPIs ===== */
+document.getElementById('kSale').innerHTML=[
+  {lbl:'ยอดขายรถใหม่',val:G.na+' / '+G.nt+' คัน',meta:'เฉลี่ย/สาขา '+G.avg+' คัน/เดือน',tag:G.np+'%',cls:G.np>=100?'up':'dn'},
+  {lbl:'มูลค่าการขายรถใหม่',val:fmtB(G.val)+' ฿',meta:'เฉลี่ย/คัน ~'+Math.round(G.val/G.na).toLocaleString('en-US')+' ฿',tag:'',cls:'nt'},
+  {lbl:'ดอกเบี้ยรถใหม่ (แท้จริง)',val:G.ir,meta:'เฉลี่ยทั้งบริษัท',tag:'',cls:'nt'},
+  {lbl:'กำไรเดือนนี้',val:fmtB(G.pl)+' ฿',meta:'สะสม '+fmtB(G.plc)+' ฿',tag:'',cls:'nt'},
+  {lbl:'จำนำเล่ม',val:G.fa+' / '+G.ft+' ราย',meta:'ปล่อยสินเชื่อ '+fmtB(G.fval)+' ฿',tag:G.fp+'%',cls:G.fp>=80?'up':'dn'},
+  {lbl:'ดอกเบี้ยไฟแนนซ์ (แท้จริง)',val:G.fir,meta:'จำนำเล่ม / ไฟแนนซ์',tag:'',cls:'nt'},
+  {lbl:'ศูนย์บริการ',val:fmtB(G.sa)+' ฿',meta:'เป้า '+fmt(G.st)+' ฿',tag:G.sp+'%',cls:G.sp>=100?'up':'dn'},
+  {lbl:'เติบโตยอดขาย (GR.5ด.)',val:`<span style="color:${G.gr5<0?'var(--red)':'var(--grn)'}">${G.gr5>0?'▲':'▼'} ${G.gr5}%</span>`,meta:'เทียบค่าเฉลี่ย 5 เดือน',tag:'',cls:'nt'}
+].map(k=>`<div class="kpi">${k.tag?`<span class="tag ${k.cls}">${k.tag}</span>`:''}<div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="meta">${k.meta}</div></div>`).join('');
+
+/* ===== SALES district cards ===== */
+document.getElementById('dSale').innerHTML=D.map(d=>{
+  const col=d.np>=100?'var(--grn)':(d.np>=80?'var(--amb)':'var(--red)');
+  return `<div class="dist"><h3>โมโต24 ${d.b}<span class="pct" style="background:rgba(255,255,255,.06);color:${col}">${d.np}%</span></h3>
+    <div class="pbar"><i style="width:${Math.min(d.np,100)}%;background:${col}"></i></div>
+    <div class="row"><span>ยอดขายรถใหม่</span><b>${d.na} / ${d.nt} คัน</b></div>
+    <div class="row"><span>เติบโต GR.5ด.</span><b class="${signCls(d.gr5)}">${arrow(d.gr5)} ${d.gr5}%</b></div>
+    <div class="row"><span>กำไรเดือนนี้</span><b class="${signCls(d.pl)}">${fmtB(d.pl)} ฿</b></div>
+    <div class="row"><span>มูลค่าการขาย</span><b>${fmtB(d.val)} ฿</b></div>
+    <div class="row"><span>จำนำเล่ม</span><b>${d.fa} / ${d.ft} ราย</b></div>
+    <div class="row"><span>ศูนย์บริการ</span><b class="${d.sp>=100?'pos':'neg'}">${d.sp}%</b></div></div>`;
+}).join('');
+
+/* ===== SALES tables ===== */
+const distAvg=di=>{const a=B.filter(x=>x.d===di);return (a.reduce((s,x)=>s+x.avg,0)/a.length).toFixed(2);};
+function tblNew(){let h=`<thead><tr><th>สาขา</th><th>เป้า</th><th>ขายจริง</th><th>%</th><th>ลูกค้าเป้าหมาย</th><th>เช็คเกอร์ผ่าน</th><th>ขาย/ผ่าน</th><th>GR.5ด.</th><th>เฉลี่ย/เดือน</th><th>กำไรเดือน (฿)</th><th>กำไรสะสม (฿)</th><th>มูลค่าขาย (฿)</th><th>ดบ.</th></tr></thead><tbody>`;
+ [1,2,3].forEach(di=>{const d=D[di-1];const f=DF[di-1];
+  h+=`<tr class="dist-row"><td class="name">โมโต24 ${d.b}</td><td>${d.nt}</td><td>${d.na}</td><td><span class="pill ${pctCls(d.np)}">${d.np}%</span></td><td>${f.lt}</td><td>${f.ck}</td><td><span class="pill ${pctCls(f.cp)}">${f.cp}%</span></td><td class="${signCls(d.gr5)}">${d.gr5}%</td><td class="${distAvg(di)<10?'neg':''}">${distAvg(di)}</td><td class="${signCls(d.pl)}">${fmt(d.pl)}</td><td class="${signCls(d.plc)}">${fmt(d.plc)}</td><td>${fmt(d.val)}</td><td>${d.ir}</td></tr>`;
+  B.filter(x=>x.d===di).forEach(x=>{const f=FN[x.b];h+=`<tr><td class="name">${x.b}</td><td>${x.nt}</td><td>${x.na}</td><td><span class="pill ${pctCls(x.np)}">${x.np}%</span></td><td>${f.lt}</td><td>${f.ck}</td><td><span class="pill ${pctCls(f.cp)}">${f.cp}%</span></td><td class="${signCls(x.gr5)}">${arrow(x.gr5)} ${x.gr5}%</td><td class="${x.avg<10?'neg':''}">${x.avg}</td><td class="${signCls(x.pl)}">${fmt(x.pl)}</td><td class="${signCls(x.plc)}">${fmt(x.plc)}</td><td>${fmt(x.val)}</td><td>${x.ir}</td></tr>`;});});
+ return h+'</tbody>';}
+function tblFin(){let h=`<thead><tr><th>สาขา</th><th>จำนำ เป้า</th><th>จำนำ จริง</th><th>%</th><th>ปล่อยสินเชื่อ (฿)</th><th>ดบ.</th><th>ศูนย์ เป้า (฿)</th><th>ศูนย์ ทำได้ (฿)</th><th>%</th></tr></thead><tbody>`;
+ [1,2,3].forEach(di=>{const d=D[di-1];
+  const dfp=d.fa/d.ft*100;
+  h+=`<tr class="dist-row"><td class="name">โมโต24 ${d.b}</td><td>${d.ft}</td><td>${d.fa}</td><td><span class="pill ${pctCls(dfp)}">${dfp.toFixed(2)}%</span></td><td>${fmt(d.fval)}</td><td>${d.fir}</td><td>${fmt(d.st)}</td><td>${fmt(d.sa)}</td><td><span class="pill ${pctCls(d.sp)}">${d.sp}%</span></td></tr>`;
+  B.filter(x=>x.d===di).forEach(x=>{h+=`<tr><td class="name">${x.b}</td><td>${x.ft}</td><td>${x.fa}</td><td><span class="pill ${pctCls(x.fp)}">${x.fp}%</span></td><td>${fmt(x.fval)}</td><td>${x.fir==null?'–':x.fir}</td><td>${fmt(x.st)}</td><td>${fmt(x.sa)}</td><td><span class="pill ${pctCls(x.sp)}">${x.sp}%</span></td></tr>`;});});
+ return h+'</tbody>';}
+document.getElementById('tblNew').innerHTML=tblNew();
+document.getElementById('tblFin').innerHTML=tblFin();
+
+function tblStk(){const t=STK.tot;let h=`<thead><tr><th>รุ่น</th><th>รับ</th><th>ขาย</th><th>คงเหลือ</th><th>สัดส่วน</th></tr></thead><tbody>`;
+ h+=`<tr class="dist-row"><td class="name">รวม</td><td>${t.r}</td><td>${t.s}</td><td>${t.bal}</td><td>${t.prop.toFixed(2)}</td></tr>`;
+ STK.rows.forEach(x=>{const pc=x.prop==null?'':(x.prop>=1?'p-bad':(x.prop>=0.5?'p-mid':'p-good'));
+  h+=`<tr><td class="name" style="${x.old?'color:var(--red)':''}">${x.m}</td><td>${x.r==null?'–':x.r}</td><td>${x.s==null?'–':x.s}</td><td>${x.bal==null?'–':x.bal}</td><td>${x.prop==null?'–':`<span class="pill ${pc}">${x.prop.toFixed(2)}</span>`}</td></tr>`;});
+ return h+'</tbody>';}
+document.getElementById('tblStk').innerHTML=tblStk();
+
+/* ===== DEBT KPIs ===== */
+document.getElementById('kDebt').innerHTML=[
+  {lbl:'อัตราเก็บหนี้รวม (ขีดเส้น)',val:GD.ks+'%',meta:'ทั้ง 3 เขต > 92%',tag:'',cls:'nt'},
+  {lbl:'รายได้ขีดเส้น',val:fmtB(GD.inc)+' ฿',meta:'ดอกเบี้ย+ค่าธรรมเนียมเก็บได้',tag:'',cls:'nt'},
+  {lbl:'งวด 1-7 (รถใหม่)',val:GD.a7n+'%',meta:'กลุ่มงวดต้น',tag:'',cls:'nt'},
+  {lbl:'งวด 1-7 (ไฟแนนซ์)',val:GD.a7f+'%',meta:'กลุ่มงวดต้น',tag:'',cls:'nt'},
+  {lbl:'งวด 1-6 (รถใหม่)',val:GD.a6n+'%',meta:'เก็บได้ดี',tag:'',cls:'nt'},
+  {lbl:'งวด 1-6 (ไฟแนนซ์)',val:GD.a6f+'%',meta:'สูงสุดในพอร์ต',tag:'',cls:'nt'},
+  {lbl:'งวด 7-12 (รถใหม่)',val:GD.l712n+'%',meta:'กลุ่มอ่อนสุด ต้องเร่ง',tag:'ต่ำ',cls:'dn'},
+  {lbl:'งวด 7-12 (ไฟแนนซ์)',val:GD.l712f+'%',meta:'ไฟแนนซ์งวดท้าย',tag:'',cls:'nt'}
+].map(k=>`<div class="kpi">${k.tag?`<span class="tag ${k.cls}">${k.tag}</span>`:''}<div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="meta">${k.meta}</div></div>`).join('');
+
+/* ===== DEBT district cards ===== */
+document.getElementById('dDebt').innerHTML=DD.map(d=>{
+  const col=d.ks>=95?'var(--grn)':(d.ks>=90?'var(--amb)':'var(--red)');
+  return `<div class="dist"><h3>โมโต24 ${d.b}<span class="pct" style="background:rgba(255,255,255,.06);color:${col}">${d.ks}%</span></h3>
+    <div class="pbar"><i style="width:${d.ks}%;background:${col}"></i></div>
+    <div class="row"><span>งวด 1-7 (รถใหม่/ไฟ)</span><b>${d.a7n}% / ${d.a7f}%</b></div>
+    <div class="row"><span>งวด 1-6 (รถใหม่/ไฟ)</span><b>${d.a6n}% / ${d.a6f}%</b></div>
+    <div class="row"><span>งวด 7-12 (รถใหม่/ไฟ)</span><b class="${d.l712n<80?'neg':''}">${d.l712n}% / ${d.l712f}%</b></div>
+    <div class="row"><span>รายได้ขีดเส้น</span><b>${fmtB(d.inc)} ฿</b></div></div>`;
+}).join('');
+
+/* ===== DEBT table ===== */
+function tblDebt(){const dcell=v=>`<td class="${v!=null&&v<90?'neg':''}">${P(v)}</td>`;
+ let h=`<thead><tr><th>สาขา</th><th>ขีดเส้น</th><th>1-7 รถใหม่</th><th>1-7 ไฟแนนซ์</th><th>1-6 รถใหม่</th><th>1-6 ไฟแนนซ์</th><th>7-12 รถใหม่</th><th>7-12 ไฟแนนซ์</th><th>รายได้ขีดเส้น (฿)</th></tr></thead><tbody>`;
+ [1,2,3].forEach(di=>{const d=DD[di-1];
+  h+=`<tr class="dist-row"><td class="name">โมโต24 ${d.b}</td><td><span class="pill ${colCls(d.ks)}">${d.ks}%</span></td>${dcell(d.a7n)}${dcell(d.a7f)}${dcell(d.a6n)}${dcell(d.a6f)}${dcell(d.l712n)}${dcell(d.l712f)}<td>${fmt(Math.round(d.inc))}</td></tr>`;
+  B.filter(x=>x.d===di).forEach(x=>{const v=BD[x.b];
+   h+=`<tr><td class="name">${x.b}</td><td><span class="pill ${colCls(v.ks)}">${v.ks}%</span></td>${dcell(v.a7n)}${dcell(v.a7f)}${dcell(v.a6n)}${dcell(v.a6f)}${dcell(v.l712n)}${dcell(v.l712f)}<td>${fmt(Math.round(v.inc))}</td></tr>`;});});
+ return h+'</tbody>';}
+document.getElementById('tblDebt').innerHTML=tblDebt();
+
+/* ===== สถานะหนี้ : KPI + tables + analysis ===== */
+const last=4, dGood=(SGOOD[4]-SGOOD[0]), dBad=(SBAD[4]-SBAD[0]);
+document.getElementById('kStat').innerHTML=[
+ {lbl:'หนี้ดี (พ.ค.)',val:SGOOD[4]+'%',meta:'ม.ค.→พ.ค. '+(dGood>0?'+':'')+dGood.toFixed(2),tag:dGood<0?'▼':'▲',cls:dGood<0?'dn':'up'},
+ {lbl:'หนี้เสี่ยง (พ.ค.)',val:SRISK[4]+'%',meta:'ทรงตัว ~5%',tag:'',cls:'nt'},
+ {lbl:'หนี้เสีย (พ.ค.)',val:SBAD[4]+'%',meta:'ม.ค.→พ.ค. '+(dBad>0?'+':'')+dBad.toFixed(2),tag:dBad>0?'▲':'▼',cls:'dn'},
+ {lbl:'หนี้ดี เขต1',val:Z1[4]+'%',meta:'ดีสุด · ค่อนข้างคงที่',tag:'',cls:'nt'},
+ {lbl:'หนี้ดี เขต2',val:Z2[4]+'%',meta:'ลดแรงสุด '+(Z2[4]-Z2[0]).toFixed(2),tag:'▼',cls:'dn'},
+ {lbl:'หนี้ดี เขต3',val:Z3[4]+'%',meta:'ต่ำสุด '+(Z3[4]-Z3[0]).toFixed(2),tag:'▼',cls:'dn'}
+].map(k=>`<div class="kpi">${k.tag?`<span class="tag ${k.cls}">${k.tag}</span>`:''}<div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="meta">${k.meta}</div></div>`).join('');
+
+function tblStat(){let h=`<thead><tr><th>เดือน</th><th>หนี้ดี</th><th>หนี้เสี่ยง</th><th>หนี้เสีย</th></tr></thead><tbody>`;
+ M5.forEach((m,i)=>{h+=`<tr${i==4?' class="dist-row"':''}><td class="name">${m}</td><td><span class="pill p-good">${SGOOD[i].toFixed(2)}%</span></td><td><span class="pill p-mid">${SRISK[i].toFixed(2)}%</span></td><td><span class="pill p-bad">${SBAD[i].toFixed(2)}%</span></td></tr>`;});
+ return h+'</tbody>';}
+function tblZone(){const cz=v=>v>=85?'p-good':(v>=80?'p-mid':'p-bad');let h=`<thead><tr><th>เดือน</th><th>เขต1</th><th>เขต2</th><th>เขต3</th></tr></thead><tbody>`;
+ M5.forEach((m,i)=>{h+=`<tr${i==4?' class="dist-row"':''}><td class="name">${m}</td><td><span class="pill ${cz(Z1[i])}">${Z1[i].toFixed(2)}%</span></td><td><span class="pill ${cz(Z2[i])}">${Z2[i].toFixed(2)}%</span></td><td><span class="pill ${cz(Z3[i])}">${Z3[i].toFixed(2)}%</span></td></tr>`;});
+ return h+'</tbody>';}
+document.getElementById('tblStat').innerHTML=tblStat();
+document.getElementById('tblZone').innerHTML=tblZone();
+
+document.getElementById('statAnalysis').innerHTML=`
+ <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--red)">▼</span><div><b>คุณภาพพอร์ตอ่อนตัวต่อเนื่อง</b> — หนี้ดีลดจาก 82.83% (ม.ค.) เหลือ 81.48% (พ.ค.) ขณะที่หนี้เสียเพิ่มจาก 11.96% เป็น <b style="color:var(--red)">13.59%</b> (+1.63 จุด) ขยับเข้าใกล้ 14%</div></div>
+ <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--amb)">▪</span><div><b>หนี้เสี่ยงทรงตัว</b> ราว 5% (4.51–5.21%) ยังไม่ใช่ปัจจัยเร่ง แต่เป็นกลุ่มที่ไหลไปเป็นหนี้เสียได้</div></div>
+ <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--grn)">▪</span><div><b>เขต1 แข็งแรงสุด</b> หนี้ดี ~88% และค่อนข้างคงที่ — เป็นต้นแบบการบริหารพอร์ต</div></div>
+ <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--red)">▼</span><div><b>เขต2 ลดแรงสุด</b> 83.94% → 82.09% (-1.85 จุด) และ <b>เขต3 ต่ำสุด</b> 77.03% → 75.44% ทั้งสองเขตเป็นจุดเสี่ยงหลัก</div></div>
+ <div style="margin-top:8px;padding:10px 12px;background:var(--panel2);border-radius:10px;border-left:3px solid var(--red)"><b>ข้อเสนอแนะ:</b> เร่งทบทวนเกณฑ์อนุมัติสินเชื่อและกระบวนการติดตามหนี้ใน <b>เขต2 และเขต3</b> เป็นลำดับแรก พร้อมเฝ้าระวังกลุ่มหนี้เสี่ยงไม่ให้ไหลเป็นหนี้เสียเพิ่ม</div>`;
+
+/* ===== CHARTS ===== */
+window.drawCharts=function(){
+Chart.defaults.color='#9aa3b2';Chart.defaults.font.family='Prompt';
+Chart.register({id:'dl',afterDatasetsDraw(c){const o=c.options.plugins&&c.options.plugins.dl;if(!o)return;const ctx=c.ctx;ctx.save();ctx.font='700 7.5px Prompt';ctx.textAlign='center';c.data.datasets.forEach((ds,di)=>{if(ds.noLabel)return;c.getDatasetMeta(di).data.forEach((b,i)=>{let v=ds.data[i];if(v==null||v==='')return;if(o.round)v=Math.round(v);else if(o.pct)v=(typeof v==='number'?v.toFixed(2):v)+'%';ctx.fillStyle=ds.labelColor||((ds.backgroundColor==='#3a4150')?'#9aa3b2':'#e8eaed');ctx.fillText(v,b.x,b.y+(ds.labelDir==='below'?12:-5));});});ctx.restore();}});
+new Chart(document.getElementById('branchBar'),{type:'bar',
+  data:{labels:B.map(x=>x.b),datasets:[
+    {label:'เป้าขาย',data:B.map(x=>x.nt),backgroundColor:'#3a4150',borderRadius:3},
+    {label:'ยอดขายจริง',data:B.map(x=>x.na),backgroundColor:B.map(x=>x.np>=100?'#34c77b':(x.np>=80?'#f0a93b':'#e23b46')),borderRadius:3}]},
+  options:{responsive:true,plugins:{legend:{display:false},dl:{}},scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:90,minRotation:90}},y:{grid:{color:'#222'},beginAtZero:true}}}});
+new Chart(document.getElementById('funnelBar'),{type:'bar',
+  data:{labels:B.map(x=>x.b),datasets:[
+    {label:'ลูกค้าเป้าหมาย',data:B.map(x=>FN[x.b].lt),backgroundColor:'#3a4150',borderRadius:3},
+    {label:'เช็คเกอร์ผ่าน',data:B.map(x=>FN[x.b].ck),backgroundColor:'#4d9fff',borderRadius:3},
+    {label:'ยอดขายจริง',data:B.map(x=>x.na),backgroundColor:'#34c77b',borderRadius:3}]},
+  options:{responsive:true,plugins:{legend:{display:false},dl:{}},scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:90,minRotation:90}},y:{grid:{color:'#222'},beginAtZero:true}}}});
+new Chart(document.getElementById('distPie'),{type:'doughnut',
+  data:{labels:D.map(x=>'โมโต24 '+x.b),datasets:[{data:D.map(x=>x.na),backgroundColor:['#e23b46','#f0a93b','#34c77b'],borderColor:'#181b22',borderWidth:3}]},
+  options:{responsive:true,cutout:'58%',plugins:{legend:{position:'bottom',labels:{padding:14,font:{size:12}}}}}});
+
+const sm=STK.rows.filter(x=>x.r!=null&&x.s!=null);
+new Chart(document.getElementById('stkBar'),{type:'bar',
+  data:{labels:sm.map(x=>x.m),datasets:[
+    {label:'รับ',data:sm.map(x=>x.r),backgroundColor:'#3a4150',borderRadius:3},
+    {label:'ขาย',data:sm.map(x=>x.s),backgroundColor:'#4d9fff',borderRadius:3},
+    {label:'คงเหลือ',data:sm.map(x=>x.bal),backgroundColor:'#f0a93b',borderRadius:3}]},
+  options:{responsive:true,plugins:{legend:{display:false},dl:{}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#222'},beginAtZero:true}}}});
+
+const bd=Object.keys(BD);
+new Chart(document.getElementById('debtBar'),{type:'bar',
+  data:{labels:bd,datasets:[{label:'ขีดเส้น %',data:bd.map(k=>BD[k].ks),backgroundColor:bd.map(k=>BD[k].ks>=95?'#34c77b':(BD[k].ks>=90?'#f0a93b':'#e23b46')),borderRadius:3}]},
+  options:{responsive:true,plugins:{legend:{display:false},dl:{round:true}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:90,minRotation:90}},y:{grid:{color:'#222'},min:80,max:100,ticks:{callback:v=>v+'%'}}}}});
+
+new Chart(document.getElementById('statBar'),{
+  type:'bar',
+  data:{labels:M5,datasets:[
+    {type:'bar',label:'หนี้ดี',data:SGOOD,backgroundColor:'#2b3a8f',borderRadius:3,labelColor:'#cdd4ff',labelDir:'above'},
+    {type:'line',label:'หนี้เสีย',data:SBAD,borderColor:'#e23b46',backgroundColor:'#e23b46',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#e23b46',labelDir:'above'},
+    {type:'line',label:'หนี้เสี่ยง',data:SRISK,borderColor:'#f0a93b',backgroundColor:'#f0a93b',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#f0a93b',labelDir:'below'}]},
+  options:{responsive:true,plugins:{legend:{display:false},dl:{pct:true}},scales:{y:{min:0,max:100,grid:{color:'#222'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
+new Chart(document.getElementById('zoneLine'),{type:'line',
+  data:{labels:M5,datasets:[
+    {label:'เขต1',data:Z1,borderColor:'#3b4cc0',backgroundColor:'#3b4cc0',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#6f7ed8',labelDir:'above'},
+    {label:'เขต2',data:Z2,borderColor:'#ef6b35',backgroundColor:'#ef6b35',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#ef6b35',labelDir:'above'},
+    {label:'เขต3',data:Z3,borderColor:'#34c77b',backgroundColor:'#34c77b',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#34c77b',labelDir:'below'}]},
+  options:{responsive:true,plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:14,padding:10}},dl:{pct:true}},scales:{y:{min:70,max:95,grid:{color:'#222'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
+
+const mo=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const y68=[93.34,92.06,92.92,90.90,91.45,90.65,90.65,92.51,91.77,90.86,82.70,93.73];
+const y69=[93.70,93.27,93.47,92.36,92.67,null,null,null,null,null,null,null];
+new Chart(document.getElementById('ksTrend'),{type:'line',
+  data:{labels:mo,datasets:[
+    {label:'2568',data:y68,borderColor:'#3b4cc0',backgroundColor:'#3b4cc0',pointRadius:3,borderWidth:2,tension:.25,labelColor:'#6f7ed8',labelDir:'below'},
+    {label:'2569',data:y69,borderColor:'#ef6b35',backgroundColor:'#ef6b35',pointRadius:3,borderWidth:2,tension:.25,labelColor:'#ef6b35',labelDir:'above',spanGaps:false},
+    {label:'Avg.2568 (91.13%)',data:mo.map(()=>91.13),borderColor:'#3b4cc0',borderDash:[5,4],borderWidth:1.5,pointRadius:0,noLabel:true},
+    {label:'Avg.2569 (93.09%)',data:mo.map(()=>93.09),borderColor:'#ef6b35',borderDash:[5,4],borderWidth:1.5,pointRadius:0,noLabel:true}]},
+  options:{responsive:true,plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:14,padding:12}},dl:{pct:true}},
+    scales:{y:{min:80,max:100,grid:{color:'#222'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
+};
+window.__onChart();
+</script>
+</body>
+</html>
