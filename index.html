@@ -3,526 +3,1844 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>โมโต24 — Executive Dashboard | พฤษภาคม 2569</title>
-<script>
-window.__onChart=function(){if(window.Chart&&window.drawCharts&&!window.__drawn){window.__drawn=1;window.drawCharts();}};
-(function(){var c=['https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js','https://unpkg.com/chart.js@4.4.1/dist/chart.umd.min.js'];var i=0;function L(){if(i>=c.length){return;}var s=document.createElement('script');s.src=c[i++];s.onload=window.__onChart;s.onerror=L;document.head.appendChild(s);}L();})();
-</script>
+<title>รายงานผู้บริหาร MOTO 24 ปี 2569</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
-  :root{
-    --bg:#0f1115; --panel:#181b22; --panel2:#1f2430; --line:#2a2f3a;
-    --txt:#e8eaed; --muted:#9aa3b2; --red:#e23b46; --reddk:#b01f2c;
-    --grn:#34c77b; --amb:#f0a93b; --blu:#4d9fff; --vio:#9b8cff;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Prompt',sans-serif;background:var(--bg);color:var(--txt);padding:28px;line-height:1.45}
-  .wrap{max-width:1280px;margin:0 auto}
-  header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:2px solid var(--red);padding-bottom:18px;margin-bottom:20px;flex-wrap:wrap}
-  .brand{display:flex;align-items:center;gap:14px}
-  .logo{height:54px;padding:0 15px;border-radius:13px;background:#2e3192;display:flex;align-items:center;font-weight:700;font-size:23px;letter-spacing:.3px;box-shadow:0 4px 14px rgba(46,49,146,.42);line-height:1}
-  .logo .w{color:#fff}
-  .logo .o{color:#f37021}
-  h1{font-size:23px;font-weight:600;letter-spacing:.3px}
-  .sub{color:var(--muted);font-size:13px;margin-top:2px}
-  .period{text-align:right}
-  .period .m{font-size:20px;font-weight:600;color:var(--red)}
-  .period .s{font-size:12px;color:var(--muted)}
-  /* toggle */
-  .toggle{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:5px;gap:5px;margin-bottom:8px}
-  .toggle button{font-family:'Prompt';font-size:14px;font-weight:600;color:var(--muted);background:transparent;border:none;padding:9px 22px;border-radius:9px;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:8px}
-  .toggle button.active{background:linear-gradient(135deg,var(--red),var(--reddk));color:#fff;box-shadow:0 3px 10px rgba(226,59,70,.3)}
-  .toggle button:not(.active):hover{color:var(--txt);background:var(--panel2)}
-  .view{display:none;animation:fade .25s ease}
-  .view.show{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .section-title{font-size:15px;font-weight:600;margin:26px 0 14px;display:flex;align-items:center;gap:9px;color:var(--txt)}
-  .section-title::before{content:'';width:4px;height:18px;background:var(--red);border-radius:3px}
-  .section-title small{color:var(--muted);font-weight:400;font-size:12px}
-  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:13px}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px;position:relative;overflow:hidden}
-  .kpi .lbl{font-size:11.5px;color:var(--muted);font-weight:400}
-  .kpi .val{font-size:23px;font-weight:600;margin-top:6px}
-  .kpi .meta{font-size:11.5px;color:var(--muted);margin-top:4px}
-  .kpi .tag{position:absolute;top:13px;right:13px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
-  .tag.up{background:rgba(52,199,123,.14);color:var(--grn)}
-  .tag.dn{background:rgba(226,59,70,.16);color:var(--red)}
-  .tag.nt{background:rgba(154,163,178,.14);color:var(--muted)}
-  .dist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .dist{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
-  .dist h3{font-size:16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
-  .dist h3 .pct{font-size:15px;font-weight:600;padding:2px 10px;border-radius:20px}
-  .pbar{height:8px;background:var(--panel2);border-radius:6px;margin:12px 0 6px;overflow:hidden}
-  .pbar i{display:block;height:100%;border-radius:6px}
-  .dist .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);padding:5px 0;border-bottom:1px dashed var(--line)}
-  .dist .row:last-child{border-bottom:none}
-  .dist .row b{color:var(--txt);font-weight:500}
-  .charts{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
-  .card h4{font-size:13.5px;font-weight:600;margin-bottom:12px;color:var(--muted)}
-  .tbl-wrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-  table{width:100%;border-collapse:collapse;font-size:12.5px}
-  th,td{padding:9px 11px;text-align:right;white-space:nowrap}
-  th{background:var(--panel2);color:var(--muted);font-weight:500;font-size:11.5px;position:sticky;top:0}
-  td:first-child,th:first-child{text-align:left;position:sticky;left:0}
-  th:first-child{background:var(--panel2)}
-  td.name{font-weight:500;background:var(--panel)}
-  tr.dist-row td{background:var(--panel2);font-weight:600;color:var(--txt);border-top:2px solid var(--red)}
-  tr:hover td{background:var(--panel2)}
-  tr.dist-row:hover td{background:var(--panel2)}
-  .pill{display:inline-block;min-width:54px;padding:2px 8px;border-radius:20px;font-weight:600;font-size:11.5px}
-  .p-good{background:rgba(52,199,123,.16);color:var(--grn)}
-  .p-mid{background:rgba(240,169,59,.16);color:var(--amb)}
-  .p-bad{background:rgba(226,59,70,.18);color:var(--red)}
-  .neg{color:var(--red)}
-  .pos{color:var(--grn)}
-  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:10px 2px 0}
-  .legend span{display:flex;align-items:center;gap:6px}
-  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
-  footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:11.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-  @media(max-width:1080px){.kpis{grid-template-columns:repeat(3,1fr)}.dist-grid{grid-template-columns:1fr}.charts{grid-template-columns:1fr}}
-  @media print{body{background:#fff;color:#111;padding:0}.toggle{display:none}.view{display:block!important}.card,.kpi,.dist,.tbl-wrap{break-inside:avoid}}
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
+:root{
+  --primary:#1a3a6c;--primary-light:#2563a8;--accent:#f97316;--accent2:#0ea5e9;
+  --success:#10b981;--danger:#ef4444;--warning:#f59e0b;--bg:#f0f4f8;--card:#fff;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --d1:#3b82f6;--d2:#f97316;--d3:#10b981;
+  --sidebar:260px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow-x:hidden}
+
+/* ── HEADER ── */
+.header{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(0,0,0,.15);position:sticky;top:0;z-index:100}
+.hlogo{width:72px;height:54px;background:#2640C5;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-right:14px;flex-shrink:0;padding:4px 8px;gap:1px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.htitle h1{font-size:18px;font-weight:700}
+.htitle p{font-size:12px;opacity:.75;margin-top:1px}
+.hperiod{font-size:13px;font-weight:600;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;white-space:nowrap}
+
+/* ── NAV ── */
+.nav{background:var(--primary);display:flex;gap:2px;padding:0 24px;overflow-x:auto}
+.nav-tab{padding:9px 18px;color:rgba(255,255,255,.6);cursor:pointer;font-size:13px;font-weight:500;border-bottom:3px solid transparent;white-space:nowrap;transition:.2s}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:#fff;border-bottom-color:var(--accent)}
+
+/* ── LAYOUT ── */
+.layout{display:flex;align-items:flex-start}
+.content{flex:1;min-width:0;padding:20px 24px 20px 20px}
+.sidebar{width:var(--sidebar);flex-shrink:0;padding:16px 0 16px 16px;position:sticky;top:97px;max-height:calc(100vh - 97px);overflow-y:auto;order:-1}
+
+/* ── SIDEBAR ── */
+.sb-card{background:var(--card);border-radius:14px;border:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden;margin-bottom:14px}
+.sb-head{background:var(--primary);color:#fff;padding:10px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.sb-body{padding:12px 14px}
+.sb-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
+.filter-btn{width:100%;text-align:left;padding:7px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;background:#fff;color:var(--text);margin-bottom:5px;transition:.15s;display:flex;align-items:center;gap:8px}
+.filter-btn:hover{border-color:var(--primary-light);background:#f0f7ff}
+.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.filter-btn .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.month-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.month-btn{padding:7px 6px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;background:#fff;color:var(--text);text-align:center;transition:.15s}
+.month-btn:hover{border-color:var(--primary-light);background:#f0f7ff}
+.month-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.month-btn.all{grid-column:1/-1}
+.sb-stat{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px}
+.sb-stat:last-child{border-bottom:none}
+.sb-stat-val{font-weight:700;font-size:13px}
+.up{color:var(--success)}
+.down{color:var(--danger)}
+.warn{color:var(--warning)}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-size:15px;font-weight:700;color:var(--primary);margin:20px 0 12px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';width:4px;height:18px;background:var(--accent);border-radius:2px}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--card);border-radius:12px;padding:14px 16px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.blue::before{background:var(--primary-light)}
+.kpi.orange::before{background:var(--accent)}
+.kpi.green::before{background:var(--success)}
+.kpi.sky::before{background:var(--accent2)}
+.kpi.purple::before{background:#8b5cf6}
+.kpi.red::before{background:var(--warning)}
+.kpi.teal::before{background:#14b8a6}
+.kpi-lbl{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px}
+.kpi-val{font-size:22px;font-weight:800;line-height:1.1}
+.kpi-unit{font-size:13px;font-weight:500;color:var(--muted)}
+.kpi-bar{height:3px;background:#f1f5f9;border-radius:2px;margin:8px 0 6px;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:2px}
+.kpi-foot{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px}
+.bg-up{background:#d1fae5;color:#059669}
+.bg-dn{background:#fee2e2;color:#dc2626}
+.bg-nu{background:#e0f2fe;color:#0284c7}
+.bg-wn{background:#fef3c7;color:#b45309}
+
+/* ── CHART GRID ── */
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.cg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.cg1{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px}
+.chart-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ch{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cs{font-size:11px;color:var(--muted);margin-bottom:12px}
+.cleg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.ld{width:9px;height:9px;border-radius:50%}
+
+/* ── TABLE ── */
+.tbl-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.05);overflow:hidden;margin-bottom:16px}
+.tbl-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.tbl-title{font-size:13px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;padding:8px 12px;text-align:right;font-size:11px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:8px 12px;text-align:right;font-size:12px;border-bottom:1px solid #f8fafc;white-space:nowrap}
+td:first-child{text-align:left;font-weight:500}
+tr:last-child td{border-bottom:none}
+tr.trow td{font-weight:700;background:#f8fafc;border-top:2px solid var(--border)}
+tr.drow td{font-weight:600;color:var(--primary)}
+.pbar{display:flex;align-items:center;gap:6px}
+.pb{flex:1;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden;min-width:50px}
+.pbf{height:100%;border-radius:3px}
+.pp{font-size:11px;font-weight:600;min-width:38px;text-align:right}
+
+/* ── DEBT SECTION ── */
+.debt-zone{background:linear-gradient(135deg,#1e293b,#334155);border-radius:14px;padding:20px;margin-bottom:20px;color:#fff}
+.debt-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.debt-kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.debt-kpi{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px}
+.debt-kpi-lbl{font-size:11px;opacity:.7;margin-bottom:4px}
+.debt-kpi-val{font-size:22px;font-weight:800}
+.debt-kpi-sub{font-size:11px;opacity:.6;margin-top:4px}
+.debt-trend{font-size:12px;margin-top:6px;padding:2px 8px;border-radius:12px;display:inline-block}
+.dt-up{background:rgba(16,185,129,.2);color:#6ee7b7}
+.dt-dn{background:rgba(239,68,68,.2);color:#fca5a5}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.p1{background:#dbeafe;color:#1d4ed8}
+.p2{background:#ffedd5;color:#c2410c}
+.p3{background:#d1fae5;color:#047857}
+
+/* ── SECTION / TAB ── */
+.section{display:none}
+.section.active{display:block}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:20px 0}
+
+/* ── MONTH SNAPSHOT ── */
+.snap-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.snap-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--card);cursor:default}
+.snap-chip.ok{border-color:#10b981;color:#047857;background:#d1fae5}
+.snap-chip.warn{border-color:#f59e0b;color:#b45309;background:#fef3c7}
+.snap-chip.bad{border-color:#ef4444;color:#dc2626;background:#fee2e2}
+
+/* ── DRILL-DOWN DISTRICT ROW ── */
+tr.district-row{cursor:pointer;background:#f0f7ff;transition:.15s}
+tr.district-row:hover{background:#dbeafe}
+tr.district-row td:first-child::before{content:'▶ ';font-size:10px;color:var(--primary-light)}
+tr.district-row.expanded td:first-child::before{content:'▼ ';color:var(--accent)}
+tr.branch-row{background:#fafcff;font-size:12px}
+tr.branch-row td{padding:6px 12px 6px 28px;color:var(--muted);border-bottom:1px dashed #e2e8f0}
+tr.branch-row td:first-child{color:var(--text);font-weight:500}
+.pct-good{color:#059669;font-weight:700}
+.pct-risk{color:#b45309;font-weight:700}
+.pct-bad{color:#dc2626;font-weight:700}
+
+/* ── STOCK SECTION ── */
+.stock-zone{margin-bottom:24px}
+.stock-kpi-card{background:var(--card);border-radius:14px;padding:18px 22px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.05);border-top:3px solid var(--accent2)}
+.stock-total-row{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.stock-total-num{font-size:40px;font-weight:900;color:var(--text);line-height:1}
+.stock-total-unit{font-size:14px;color:var(--muted);font-weight:500}
+.stock-total-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px}
+.stock-chips{display:flex;gap:8px;flex-wrap:wrap}
+.stock-chip{display:flex;flex-direction:column;align-items:center;padding:8px 16px;border-radius:10px;gap:2px;background:var(--bg2);border:1px solid var(--border);min-width:72px}
+.stock-chip-lbl{font-size:10px;color:var(--muted);font-weight:600;white-space:nowrap}
+.stock-chip-num{font-size:20px;font-weight:800;color:var(--text)}
+.stock-chip-pct{font-size:10px;color:var(--muted)}
+.stock-branch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
+.stock-br-card{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)}
+.stock-br-name{font-size:11px;color:var(--text);font-weight:500}
+.stock-br-cnt{font-size:16px;font-weight:800;color:var(--accent2)}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="top">
-    <div class="brand">
-      <div class="logo"><span class="w">โมโต</span><span class="o">24</span></div>
-      <div>
-        <h1>โมโต24 — รายงานผู้บริหาร</h1>
-        <div class="sub">สรุปผลการดำเนินงานรายเขต / รายสาขา</div>
-      </div>
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;align-items:center">
+    <div class="hlogo">
+      <div style="font-size:17px;font-weight:900;line-height:1;letter-spacing:-0.5px;color:#fff;font-family:'Sarabun',sans-serif">โมโต<span style="color:#E86520">24</span></div>
+      <div style="font-size:6px;color:rgba(255,255,255,0.78);letter-spacing:0.2px;white-space:nowrap">บริษัท โมโต24 จำกัด</div>
     </div>
-    <div class="period">
-      <div class="m">พฤษภาคม 2569</div>
-      <div class="s">May 2026 · 21 สาขา · 3 เขต</div>
+    <div class="htitle">
+      <h1>รายงานผู้บริหาร MOTO 24</h1>
+      <p>ภาพรวมการดำเนินงาน ครึ่งปีแรก 2569 · เปรียบเทียบปี 2568</p>
     </div>
-  </header>
+  </div>
+  <div class="hperiod" id="hperiod">📅 ทั้งหมด ม.ค.–มิ.ย. 2569</div>
+</div>
 
-  <div class="toggle">
-    <button id="btnSale" class="active" onclick="show('sale')">📈 ส่วนขาย</button>
-    <button id="btnDebt" onclick="show('debt')">💰 ส่วนเก็บหนี้</button>
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-tab active" onclick="showTab('overview',this)">📊 ภาพรวม</div>
+  <div class="nav-tab" onclick="showTab('sales',this)">🏍 ยอดขายรถใหม่</div>
+  <div class="nav-tab" onclick="showTab('service',this)">🔧 ศูนย์บริการ</div>
+  <div class="nav-tab" onclick="showTab('finance',this)">💰 การเงิน &amp; กำไร</div>
+  <div class="nav-tab" onclick="showTab('debt',this)">📋 สถานะหนี้</div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+<!-- ══ CONTENT ══ -->
+<div class="content">
+
+<!-- ════════════ TAB: ภาพรวม ════════════ -->
+<div id="tab-overview" class="section active">
+
+  <div class="sec-title" id="ov-title">KPI ภาพรวม – ทั้งหมด ม.ค.–มิ.ย. 2569</div>
+  <div class="kpi-grid" id="kpi-main">
+    <!-- KPIs rendered by JS -->
   </div>
 
-  <!-- ============ SALES VIEW ============ -->
-  <div id="vSale" class="view show">
-    <div class="section-title">ภาพรวมยอดขาย <small>โมโต24 (รวมทุกเขต)</small></div>
-    <div class="kpis" id="kSale" style="grid-template-columns:repeat(4,1fr)"></div>
-
-    <div class="card" style="margin-top:14px;display:flex;align-items:center;justify-content:space-around;gap:8px;flex-wrap:wrap">
-      <div style="text-align:center"><div style="font-size:11.5px;color:var(--muted)">ลูกค้าเป้าหมาย</div><div style="font-size:26px;font-weight:600">693</div></div>
-      <div style="text-align:center;color:var(--muted)"><div style="font-size:11px">ผ่านเช็คเกอร์</div><div style="font-size:16px;font-weight:600;color:var(--amb)">44.0% ▸</div></div>
-      <div style="text-align:center"><div style="font-size:11.5px;color:var(--muted)">เช็คเกอร์ผ่าน</div><div style="font-size:26px;font-weight:600;color:var(--blu)">305</div></div>
-      <div style="text-align:center;color:var(--muted)"><div style="font-size:11px">ปิดการขาย</div><div style="font-size:16px;font-weight:600;color:var(--grn)">76.39% ▸</div></div>
-      <div style="text-align:center"><div style="font-size:11.5px;color:var(--muted)">ยอดขายจริง</div><div style="font-size:26px;font-weight:600;color:var(--grn)">233</div></div>
+  <!-- Revenue District Chart -->
+  <div class="cg2">
+    <div class="chart-card">
+      <div class="ch">มูลค่าการขายรายเดือน (บาท)</div>
+      <div class="cs" id="rev-sub">แยกตามเขต · ม.ค.–มิ.ย. 2569</div>
+      <div class="cleg">
+        <div class="li"><div class="ld" style="background:var(--d1)"></div>เขต 1</div>
+        <div class="li"><div class="ld" style="background:var(--d2)"></div>เขต 2</div>
+        <div class="li"><div class="ld" style="background:var(--d3)"></div>เขต 3</div>
+      </div>
+      <canvas id="cRevDist" height="200"></canvas>
     </div>
-
-    <div class="section-title">เปรียบเทียบรายเขต <small>ยอดขายรถใหม่ · เป้า vs ทำได้</small></div>
-    <div class="dist-grid" id="dSale"></div>
-
-    <div class="charts">
-      <div class="card">
-        <h4>ยอดขายรถใหม่รายสาขา — เป้า vs ทำได้ (คัน)</h4>
-        <canvas id="branchBar" height="150"></canvas>
-        <div class="legend">
-          <span><i class="dot" style="background:#3a4150"></i> เป้าขาย</span>
-          <span><i class="dot" style="background:var(--grn)"></i> ≥100%</span>
-          <span><i class="dot" style="background:var(--amb)"></i> 80–99%</span>
-          <span><i class="dot" style="background:var(--red)"></i> &lt;80%</span>
-        </div>
+    <div class="chart-card">
+      <div class="ch">ยอดขายรถใหม่ 2569 vs 2568 (คัน)</div>
+      <div class="cs" id="sale-sub">ม.ค.–มิ.ย.</div>
+      <div class="cleg">
+        <div class="li"><div class="ld" style="background:var(--primary)"></div>ทำได้ 2569</div>
+        <div class="li"><div class="ld" style="background:#94a3b8"></div>ทำได้ 2568</div>
+        <div class="li"><div class="ld" style="background:#1a3a6c;opacity:.2;border-radius:2px"></div>เป้า 2569</div>
       </div>
-      <div class="card">
-        <h4>สัดส่วนยอดขายรถใหม่ตามเขต (คัน)</h4>
-        <canvas id="distPie" height="150"></canvas>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:16px">
-      <h4>ยอดขาย เทียบ ลูกค้าเป้าหมาย &amp; เช็คเกอร์ผ่าน (รายสาขา · คัน)</h4>
-      <canvas id="funnelBar" height="95"></canvas>
-      <div class="legend">
-        <span><i class="dot" style="background:#3a4150"></i> ลูกค้าเป้าหมาย</span>
-        <span><i class="dot" style="background:#4d9fff"></i> เช็คเกอร์ผ่าน</span>
-        <span><i class="dot" style="background:#34c77b"></i> ยอดขายจริง</span>
-      </div>
-      <div class="legend"><span style="color:var(--muted)">* ขาย/ผ่าน = ยอดขาย ÷ เช็คเกอร์ผ่าน (ทุกสาขา ≤100% — เช็คเกอร์ผ่าน ≥ ยอดขาย)</span></div>
-    </div>
-
-    <div class="section-title">รายสาขา — ยอดขายรถใหม่ <small>เรียงตามเขต · GR.5ด.=เติบโตเทียบเฉลี่ย 5 เดือน · เฉลี่ย/เดือน=ยอดขายเฉลี่ยต่อเดือน · ดบ.=ดอกเบี้ยที่แท้จริง</small></div>
-    <div class="tbl-wrap" style="overflow-x:auto"><table id="tblNew"></table></div>
-
-    <div class="section-title">รายสาขา — จำนำเล่ม &amp; ศูนย์บริการ</div>
-    <div class="tbl-wrap" style="overflow-x:auto"><table id="tblFin"></table></div>
-
-    <div class="section-title">รายการรับรถ <small>สต็อกรถใหม่รายรุ่น · รับ / ขาย / คงเหลือ (พ.ค. 2569) · สัดส่วน = คงเหลือ ÷ ขาย</small></div>
-    <div class="charts" style="grid-template-columns:1.25fr 1fr">
-      <div class="card">
-        <h4>รับ · ขาย · คงเหลือ รายรุ่น (คัน)</h4>
-        <canvas id="stkBar" height="135"></canvas>
-        <div class="legend">
-          <span><i class="dot" style="background:#3a4150"></i> รับ</span>
-          <span><i class="dot" style="background:#4d9fff"></i> ขาย</span>
-          <span><i class="dot" style="background:#f0a93b"></i> คงเหลือ</span>
-        </div>
-      </div>
-      <div class="card" style="padding:14px">
-        <h4>ตารางรายรุ่น</h4>
-        <div style="overflow-x:auto"><table id="tblStk"></table></div>
-        <div class="legend"><span style="color:var(--red)">▪ รุ่นตกรุ่น</span><span><i class="dot" style="background:var(--red)"></i> สัดส่วน ≥1 (สต็อกค้าง)</span></div>
-      </div>
+      <canvas id="cSaleYoY" height="200"></canvas>
     </div>
   </div>
 
-  <!-- ============ DEBT VIEW ============ -->
-  <div id="vDebt" class="view">
-    <div class="section-title">ภาพรวมการเก็บหนี้ <small>โมโต24 (รวมทุกเขต)</small></div>
-    <div class="kpis" id="kDebt" style="grid-template-columns:repeat(4,1fr)"></div>
+  <!-- YoY Table -->
+  <div class="sec-title">เปรียบเทียบยอดขาย 2569 vs 2568 รายเดือน</div>
+  <div class="tbl-wrap" id="tbl-yoy"><!-- rendered JS --></div>
 
-    <div class="section-title">เปรียบเทียบรายเขต <small>อัตราเก็บหนี้ (ขีดเส้น) &amp; รายได้</small></div>
-    <div class="dist-grid" id="dDebt"></div>
+  <!-- DEBT ZONE (bottom of overview) -->
+  <div class="sec-title" style="margin-top:28px">สรุปสถานะหนี้ – <span id="debt-month-label">รายเดือน ม.ค.–มิ.ย. 2569</span></div>
+  <div class="debt-zone">
+    <div class="debt-kpi-grid" id="debt-kpis"><!-- rendered by JS --></div>
+    <div class="cg2">
 
-    <div class="charts" style="grid-template-columns:1fr">
-      <div class="card">
-        <h4>อัตราเก็บหนี้ (ขีดเส้น) รายสาขา — ค่าเฉลี่ยบริษัท 92.67%</h4>
-        <canvas id="debtBar" height="90"></canvas>
-        <div class="legend">
-          <span><i class="dot" style="background:var(--grn)"></i> ≥95%</span>
-          <span><i class="dot" style="background:var(--amb)"></i> 90–95%</span>
-          <span><i class="dot" style="background:var(--red)"></i> &lt;90%</span>
-        </div>
-      </div>
-    </div>
 
-    <div class="card" style="margin-top:16px">
-      <h4>เปรียบเทียบขีดเส้น 2568–2569 <span style="font-weight:400">· อัตราเก็บหนี้รายเดือน</span></h4>
-      <canvas id="ksTrend" height="105"></canvas>
-    </div>
-
-    <div class="section-title">รายสาขา — รายละเอียดการเก็บหนี้ <small>แยกตามกลุ่มงวด (รถใหม่ / ไฟแนนซ์)</small></div>
-    <div class="tbl-wrap" style="overflow-x:auto"><table id="tblDebt"></table></div>
-    <div class="legend">
-      <span style="margin-left:auto">ขีดเส้น = อัตราเก็บหนี้รวมตามเป้า · กลุ่มงวด 1-7 / 1-6 / 7-12 · รายได้ขีดเส้น = ดอกเบี้ย+ค่าธรรมเนียมที่เก็บได้</span>
-    </div>
-
-    <div class="section-title">สถานะหนี้ (คุณภาพพอร์ต) <small>หนี้ดี / หนี้เสี่ยง / หนี้เสีย · ม.ค.–พ.ค. 2569</small></div>
-    <div class="kpis" id="kStat"></div>
-    <div class="charts" style="margin-top:16px">
-      <div class="card">
-        <h4>หนี้ดี · หนี้เสี่ยง · หนี้เสีย (รายเดือน)</h4>
-        <canvas id="statBar" height="150"></canvas>
-        <div class="legend">
-          <span><i class="dot" style="background:#2b3a8f"></i> หนี้ดี</span>
-          <span><i class="dot" style="background:#f0a93b"></i> หนี้เสี่ยง</span>
-          <span><i class="dot" style="background:#e23b46"></i> หนี้เสีย</span>
-        </div>
-      </div>
-      <div class="card">
-        <h4>%หนี้ดี รายเขต (รายเดือน)</h4>
-        <canvas id="zoneLine" height="150"></canvas>
-      </div>
-    </div>
-    <div class="charts" style="margin-top:16px">
-      <div class="card" style="padding:14px"><h4>สถานะหนี้รวม</h4><div style="overflow-x:auto"><table id="tblStat"></table></div></div>
-      <div class="card" style="padding:14px"><h4>หนี้ดี รายเขต</h4><div style="overflow-x:auto"><table id="tblZone"></table></div></div>
-    </div>
-    <div class="card" style="margin-top:16px">
-      <h4>วิเคราะห์สถานะหนี้</h4>
-      <div id="statAnalysis" style="font-size:13px;line-height:1.75"></div>
     </div>
   </div>
 
-  <footer>
-    <div>แหล่งข้อมูล: Google Sheet “Data May 2026” → แท็บ Dashboard · ดึงข้อมูล ณ 2 มิ.ย. 2569</div>
-    <div>หน่วย: คัน / บาท / %</div>
-  </footer>
+  <!-- STOCK ZONE -->
+  <div class="sec-title" style="margin-top:28px">📦 สต็อกคงเหลือ</div>
+  <div id="stock-zone" class="stock-zone"><!-- rendered by JS --></div>
 
+</div><!-- /overview -->
+
+<!-- ════════════ TAB: ยอดขาย ════════════ -->
+<div id="tab-sales" class="section">
+  <div class="sec-title" id="sale-title">ยอดขายรถใหม่ – ทั้งหมด ม.ค.–มิ.ย. 2569</div>
+  <div class="kpi-grid" id="kpi-sales"></div>
+  <div class="cg1">
+    <div class="chart-card">
+      <div class="ch">ยอดขายรายเดือน เปรียบ 2569 vs 2568 (คัน)</div>
+      <div class="cs">รวม MOTO 24</div>
+      <canvas id="cSaleFull" height="130"></canvas>
+    </div>
+  </div>
+  <div class="sec-title">ยอดขายรายเดือน แยกตามเขต</div>
+  <div class="tbl-wrap" id="tbl-sales-district"></div>
+</div>
+
+<!-- ════════════ TAB: ศูนย์บริการ ════════════ -->
+<div id="tab-service" class="section">
+  <div class="sec-title" id="svc-title">ศูนย์บริการ – ทั้งหมด ม.ค.–มิ.ย. 2569</div>
+  <div class="kpi-grid" id="kpi-svc"></div>
+  <div class="cg1">
+    <div class="chart-card">
+      <div class="ch">ยอดศูนย์บริการรายเดือน เปรียบ 2569 vs 2568 (บาท)</div>
+      <div class="cs">รวม MOTO 24</div>
+      <canvas id="cSvcYoY" height="130"></canvas>
+    </div>
+  </div>
+  <div class="sec-title">ยอดศูนย์บริการ – รายเดือน</div>
+  <div class="tbl-wrap" id="tbl-svc"></div>
+  <div class="sec-title">ยอดจำนำเล่ม – รายเดือน</div>
+  <div class="tbl-wrap" id="tbl-pawn"></div>
+</div>
+
+<!-- ════════════ TAB: การเงิน ════════════ -->
+<div id="tab-finance" class="section">
+  <div class="sec-title" id="fin-title">กำไร-ขาดทุน & สินเชื่อ – ทั้งหมด ม.ค.–มิ.ย. 2569</div>
+  <div class="cg2">
+    <div class="chart-card">
+      <div class="ch">กำไร-ขาดทุนรายเดือน (บาท)</div>
+      <div class="cs">แยกตามเขต</div>
+      <canvas id="cProfit" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="ch">สินเชื่อปล่อยใหม่ (บาท)</div>
+      <div class="cs">แยกตามเขต</div>
+      <canvas id="cCredit" height="220"></canvas>
+    </div>
+  </div>
+  <div class="sec-title">กำไร-ขาดทุน รายเดือน แยกเขต</div>
+  <div class="tbl-wrap" id="tbl-profit"></div>
+  <div class="sec-title">สินเชื่อปล่อยใหม่ รายเดือน แยกเขต</div>
+  <div class="tbl-wrap" id="tbl-credit"></div>
+</div>
+
+<!-- ════════════ TAB: สถานะหนี้ ════════════ -->
+<div id="tab-debt" class="section">
+  <div class="sec-title" id="debt-title">สถานะหนี้ – ทั้งหมด ม.ค.–มิ.ย. 2569</div>
+
+  <div class="cg3">
+    <div class="chart-card">
+      <div class="ch">หนี้ดี</div><div class="cs">0-2 เดือน (%)</div>
+      <canvas id="cDebtGood" height="160"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="ch">หนี้เสี่ยง</div><div class="cs">3-6 เดือน (%)</div>
+      <canvas id="cDebtRisk" height="160"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="ch">หนี้เสีย</div><div class="cs">7+ เดือน (%)</div>
+      <canvas id="cDebtBad" height="160"></canvas>
+    </div>
+  </div>
+
+  <div class="cg2">
+
+
+  </div>
+
+  <div class="sec-title">ตารางสรุปสถานะหนี้รายเดือน</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>เดือน</th>
+        <th>หนี้ดี (%)</th><th>หนี้เสี่ยง (%)</th><th>หนี้เสีย (%)</th>
+        <th>เก็บหนี้ 1-6</th><th>1-7 รถใหม่</th><th>1-7 ไฟแนนซ์</th><th>เก็บหนี้ 7-12</th><th>เป้า 1-6</th><th>ทำได้ 1-6</th>
+      </tr></thead>
+      <tbody id="tbl-debt-body"></tbody>
+    </table>
+  </div>
+
+  <!-- ตารางเก็บหนี้ งวด 1-7 รายเดือน (สรุปหนี้1-7) -->
+  <div class="sec-title">สรุปการเก็บหนี้ งวด 1-7 รายเดือน <span style="font-size:11px;font-weight:400;color:var(--muted)">(จาก Sheet: สรุป 1-7)</span></div>
+  <div class="tbl-wrap" id="tbl-debt17new"></div>
+  <div class="tbl-wrap" id="tbl-debt17fin" style="margin-top:12px"></div>
+
+  <!-- ตารางเก็บหนี้ งวด 1-6 รายเดือน (หนี้1-6) -->
+  <div class="sec-title">สรุปการเก็บหนี้ งวด 1-6 รายเดือน <span style="font-size:11px;font-weight:400;color:var(--muted)">(จาก Sheet: หนี้1-6)</span></div>
+  <div class="tbl-wrap" id="tbl-debt16new"></div>
+  <div class="tbl-wrap" id="tbl-debt16fin" style="margin-top:12px"></div>
+
+  <!-- ตารางเก็บหนี้ งวด 7-12 รายเดือน (หนี้7-12) -->
+  <div class="sec-title">สรุปการเก็บหนี้ งวด 7-12 รายเดือน <span style="font-size:11px;font-weight:400;color:var(--muted)">(จาก Sheet: สรุป 7-12)</span></div>
+  <div class="tbl-wrap" id="tbl-debt712new"></div>
+  <div class="tbl-wrap" id="tbl-debt712fin" style="margin-top:12px"></div>
+
+  <!-- ตารางหนี้รายเขต – คลิกเพื่อดูรายสาขา -->
+  <div class="sec-title">สถานะหนี้รายเขต – เดือนล่าสุด <span style="font-size:11px;font-weight:400;color:var(--muted)">(คลิกแถวเขตเพื่อดูรายสาขา)</span></div>
+  <div class="tbl-wrap" id="tbl-debt-district"></div>
+</div>
+
+</div><!-- /content -->
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+
+  <!-- Month Filter -->
+  <div class="sb-card">
+    <div class="sb-head">📅 เลือกเดือน</div>
+    <div class="sb-body">
+      <div class="month-grid">
+        <button class="month-btn all active" onclick="setMonth('all',this)">ทั้งหมด H1</button>
+        <button class="month-btn" onclick="setMonth(0,this)">ม.ค.</button>
+        <button class="month-btn" onclick="setMonth(1,this)">ก.พ.</button>
+        <button class="month-btn" onclick="setMonth(2,this)">มี.ค.</button>
+        <button class="month-btn" onclick="setMonth(3,this)">เม.ย.</button>
+        <button class="month-btn" onclick="setMonth(4,this)">พ.ค.</button>
+        <button class="month-btn" onclick="setMonth(5,this)">มิ.ย.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- District Filter (dynamic – rendered by JS) -->
+  <div class="sb-card">
+    <div class="sb-head">📍 เลือกเขต / สาขา</div>
+    <div class="sb-body" id="sb-district"><!-- rendered by JS --></div>
+  </div>
+
+  <!-- Quick Stats (reactive) -->
+  <div class="sb-card">
+    <div class="sb-head">⚡ สรุปด่วน</div>
+    <div class="sb-body" id="sb-quick">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+  <!-- Debt Status Snapshot -->
+  <div class="sb-card">
+    <div class="sb-head">🔴 สถานะหนี้</div>
+    <div class="sb-body" id="sb-debt">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+</div><!-- /sidebar -->
+</div><!-- /layout -->
+
+<div style="text-align:center;padding:16px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)">
+  ข้อมูลจาก Google Sheets: Inventory 2026 (MOTO 24) · H1 ปี 2569 (ม.ค.–มิ.ย.) · เปรียบเทียบ H1 ปี 2568 · * ประมาณจากผลรวม
 </div>
 
 <script>
-/* ===== SALES DATA ===== */
-const G={na:233,nt:266,np:87.59,gr5:-5.30,avg:9.53,pl:1332000,plc:4510000,val:15770300,ir:1.71,ft:69,fa:35,fp:50.72,fval:833010,fir:2.11,st:257100,sa:278082,sp:108.16};
-const D=[
- {b:"เขต 1",nt:98,na:87,np:88.78,gr5:-4.00,pl:533500,plc:1385500,val:5894300,ir:1.70,ft:27,fa:11,fval:285010,fir:1.85,st:87900,sa:98388,sp:111.93},
- {b:"เขต 2",nt:87,na:57,np:65.52,gr5:-24.29,pl:141500,plc:556500,val:3897800,ir:1.74,ft:22,fa:19,fval:458000,fir:2.15,st:88800,sa:88642,sp:99.82},
- {b:"เขต 3",nt:81,na:89,np:109.88,gr5:12.04,pl:657000,plc:2568000,val:5978200,ir:1.71,ft:20,fa:5,fval:90000,fir:2.54,st:80400,sa:91052,sp:113.25}
-];
-const B=[
- {d:1,b:"15-บ่อล้อ",nt:15,na:6,np:40.00,gr5:-58.93,avg:4.60,pl:8000,plc:-68500,val:392000,ir:1.68,ft:4,fa:2,fp:50.00,fval:52010,fir:2.02,st:15100,sa:11860,sp:78.54},
- {d:1,b:"18-หัวไทร",nt:13,na:4,np:30.77,gr5:-43.48,avg:5.20,pl:-16000,plc:-34500,val:278000,ir:1.81,ft:4,fa:1,fp:25.00,fval:32000,fir:1.78,st:11400,sa:11407,sp:100.06},
- {d:1,b:"26-ปากพนัง",nt:10,na:12,np:120.00,gr5:135.29,avg:8.00,pl:68500,plc:98000,val:793000,ir:1.75,ft:4,fa:3,fp:75.00,fval:63000,fir:1.94,st:8100,sa:13805,sp:170.43},
- {d:1,b:"27-สทิงพระ",nt:12,na:16,np:133.33,gr5:38.30,avg:13.00,pl:128000,plc:458000,val:1071000,ir:1.67,ft:3,fa:2,fp:66.67,fval:44000,fir:1.79,st:11400,sa:16324,sp:143.19},
- {d:1,b:"29-ระโนด",nt:10,na:12,np:120.00,gr5:23.08,avg:9.60,pl:83000,plc:268500,val:771000,ir:1.71,ft:3,fa:2,fp:66.67,fval:33000,fir:1.68,st:8200,sa:9076,sp:110.68},
- {d:1,b:"30-สิงหนคร",nt:12,na:10,np:83.33,gr5:-26.09,avg:6.80,pl:54000,plc:49000,val:722000,ir:1.76,ft:3,fa:0,fp:0.00,fval:32000,fir:1.71,st:11000,sa:9400,sp:85.45},
- {d:1,b:"36-ควนหิน",nt:16,na:16,np:100.00,gr5:9.43,avg:11.60,pl:130500,plc:384000,val:1128900,ir:1.65,ft:3,fa:1,fp:33.33,fval:29000,fir:1.76,st:13100,sa:16131,sp:123.14},
- {d:1,b:"37-บ้านด่าน",nt:10,na:11,np:110.00,gr5:-8.70,avg:8.40,pl:77500,plc:231000,val:738400,ir:1.67,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:9600,sa:10385,sp:108.18},
- {d:2,b:"14-ร่อนพิบูลย์",nt:11,na:2,np:18.18,gr5:-34.78,avg:6.00,pl:-47000,plc:-7500,val:154000,ir:1.76,ft:4,fa:6,fp:150.00,fval:157000,fir:1.97,st:11200,sa:9105,sp:81.29},
- {d:2,b:"16-ทุ่งใหญ่",nt:11,na:12,np:109.09,gr5:34.88,avg:11.60,pl:69500,plc:304500,val:850900,ir:1.78,ft:3,fa:1,fp:33.33,fval:32000,fir:1.78,st:13100,sa:20214,sp:154.31},
- {d:2,b:"23-ชะอวด",nt:13,na:8,np:61.54,gr5:-48.28,avg:6.00,pl:24500,plc:3000,val:549000,ir:1.63,ft:3,fa:1,fp:33.33,fval:16000,fir:2.07,st:13600,sa:14449,sp:106.24},
- {d:2,b:"24-นบพิตำ",nt:15,na:16,np:106.67,gr5:-26.23,avg:9.00,pl:137500,plc:263500,val:1027400,ir:1.80,ft:3,fa:4,fp:133.33,fval:128000,fir:1.84,st:15700,sa:13607,sp:86.67},
- {d:2,b:"25-พิปูน",nt:14,na:2,np:14.29,gr5:-33.33,avg:7.60,pl:-36000,plc:151000,val:130000,ir:1.84,ft:3,fa:5,fp:166.67,fval:85000,fir:2.78,st:15200,sa:9894,sp:65.09},
- {d:2,b:"31-ท่าศาลา",nt:12,na:8,np:66.67,gr5:-38.89,avg:6.60,pl:29000,plc:52000,val:539000,ir:1.65,ft:3,fa:2,fp:66.67,fval:40000,fir:1.93,st:12000,sa:12855,sp:107.13},
- {d:2,b:"33-หัวถนน",nt:11,na:9,np:81.82,gr5:0.00,avg:6.20,pl:-36000,plc:-210000,val:647500,ir:1.75,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:8000,sa:8518,sp:106.48},
- {d:3,b:"19-สตูล",nt:14,na:16,np:114.29,gr5:1.32,avg:15.40,pl:127500,plc:461500,val:1074900,ir:1.63,ft:4,fa:0,fp:0.00,fval:0,fir:null,st:14800,sa:15816,sp:106.86},
- {d:3,b:"20-ฉลุง",nt:17,na:14,np:82.35,gr5:-10.13,avg:14.20,pl:98000,plc:487500,val:927700,ir:1.66,ft:3,fa:2,fp:66.67,fval:35000,fir:3.42,st:18800,sa:22872,sp:121.66},
- {d:3,b:"21-ท่าแพ",nt:11,na:14,np:127.27,gr5:70.21,avg:16.00,pl:125500,plc:687000,val:940500,ir:1.65,ft:4,fa:2,fp:50.00,fval:45000,fir:1.98,st:10900,sa:12709,sp:116.60},
- {d:3,b:"22-ละงู",nt:14,na:19,np:135.71,gr5:66.67,avg:17.00,pl:146000,plc:667000,val:1270900,ir:1.64,ft:3,fa:1,fp:33.33,fval:10000,fir:null,st:15200,sa:16468,sp:108.34},
- {d:3,b:"28-ควนกาหลง",nt:13,na:10,np:76.92,gr5:-70.49,avg:3.60,pl:64000,plc:-81000,val:674300,ir:1.81,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:11500,sa:12540,sp:109.04},
- {d:3,b:"32-รัตภูมิ",nt:12,na:16,np:133.33,gr5:60.47,avg:13.80,pl:96000,plc:346000,val:1089900,ir:1.95,ft:3,fa:0,fp:0.00,fval:0,fir:null,st:9200,sa:10647,sp:115.73}
-];
+Chart.defaults.font.family = "'Sarabun', sans-serif";
+Chart.defaults.font.size = 12;
 
-/* ===== DEBT DATA (ก = ขีดเส้น, ตามด้วยกลุ่มงวด รถใหม่/ไฟแนนซ์, inc = รายได้ขีดเส้น) ===== */
-const GD={ks:92.67,a7n:92.23,a7f:92.99,a6n:96.76,a6f:99.26,l712n:78.95,l712f:91.00,inc:8896634.95};
-const DD=[
- {b:"เขต 1",ks:92.93,a7n:93.86,a7f:91.23,a6n:97.64,a6f:100.00,l712n:82.51,l712f:92.59,inc:2974819.02},
- {b:"เขต 2",ks:92.84,a7n:90.41,a7f:90.77,a6n:94.54,a6f:98.08,l712n:84.44,l712f:88.89,inc:3367442.18},
- {b:"เขต 3",ks:92.25,a7n:92.21,a7f:100.00,a6n:97.67,a6f:100.00,l712n:70.72,l712f:91.89,inc:2554373.75}
-];
-const BD={
- "15-บ่อล้อ":{ks:90.34,a7n:86.96,a7f:73.33,a6n:95.24,a6f:100.00,l712n:86.89,l712f:85.71,inc:500436.44},
- "18-หัวไทร":{ks:95.21,a7n:92.31,a7f:100.00,a6n:100.00,a6f:100.00,l712n:75.61,l712f:66.67,inc:387211.76},
- "26-ปากพนัง":{ks:95.17,a7n:96.97,a7f:100.00,a6n:100.00,a6f:100.00,l712n:86.96,l712f:100.00,inc:298169.78},
- "27-สทิงพระ":{ks:94.17,a7n:95.00,a7f:100.00,a6n:100.00,a6f:100.00,l712n:82.50,l712f:100.00,inc:436774.48},
- "29-ระโนด":{ks:94.23,a7n:96.30,a7f:100.00,a6n:98.00,a6f:100.00,l712n:86.36,l712f:100.00,inc:303526.90},
- "30-สิงหนคร":{ks:92.17,a7n:90.24,a7f:85.71,a6n:94.29,a6f:100.00,l712n:86.84,l712f:100.00,inc:335655.62},
- "36-ควนหิน":{ks:92.35,a7n:97.14,a7f:null,a6n:98.33,a6f:null,l712n:74.14,l712f:null,inc:394241.45},
- "37-บ้านด่าน":{ks:91.12,a7n:93.44,a7f:null,a6n:96.36,a6f:null,l712n:90.00,l712f:null,inc:318802.59},
- "14-ร่อนพิบูลย์":{ks:90.50,a7n:87.80,a7f:91.67,a6n:91.43,a6f:100.00,l712n:89.29,l712f:78.57,inc:466975.35},
- "16-ทุ่งใหญ่":{ks:95.56,a7n:94.29,a7f:85.71,a6n:96.55,a6f:100.00,l712n:91.67,l712f:100.00,inc:543548.60},
- "23-ชะอวด":{ks:92.27,a7n:88.89,a7f:90.00,a6n:92.50,a6f:100.00,l712n:80.70,l712f:100.00,inc:434147.61},
- "24-นบพิตำ":{ks:91.67,a7n:89.29,a7f:85.71,a6n:92.31,a6f:85.71,l712n:91.14,l712f:80.00,inc:641888.36},
- "25-พิปูน":{ks:92.78,a7n:90.91,a7f:83.33,a6n:95.45,a6f:100.00,l712n:73.21,l712f:100.00,inc:613940.11},
- "31-ท่าศาลา":{ks:95.50,a7n:97.87,a7f:100.00,a6n:100.00,a6f:100.00,l712n:84.31,l712f:100.00,inc:465978.92},
- "33-หัวถนน":{ks:89.42,a7n:76.67,a7f:100.00,a6n:92.59,a6f:100.00,l712n:78.57,l712f:null,inc:200963.23},
- "19-สตูล":{ks:92.57,a7n:92.31,a7f:100.00,a6n:100.00,a6f:100.00,l712n:71.43,l712f:90.91,inc:465705.66},
- "20-ฉลุง":{ks:90.52,a7n:88.79,a7f:100.00,a6n:97.03,a6f:100.00,l712n:85.00,l712f:85.71,inc:619542.78},
- "21-ท่าแพ":{ks:91.12,a7n:92.86,a7f:100.00,a6n:98.18,a6f:100.00,l712n:61.11,l712f:100.00,inc:396635.37},
- "22-ละงู":{ks:96.07,a7n:95.50,a7f:100.00,a6n:97.94,a6f:100.00,l712n:84.42,l712f:100.00,inc:532354.12},
- "28-ควนกาหลง":{ks:88.89,a7n:85.71,a7f:100.00,a6n:91.67,a6f:100.00,l712n:44.29,l712f:100.00,inc:238220.41},
- "32-รัตภูมิ":{ks:92.12,a7n:93.15,a7f:100.00,a6n:96.55,a6f:100.00,l712n:65.00,l712f:100.00,inc:301915.41}
+// ─── DATA ─────────────────────────────────────────────────
+const MOS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.'];
+const MOS_FULL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน'];
+
+// Revenue by district [d1, d2, d3] per month
+const REV = {
+  d1:[4090500,5820800,3068300,3851200,5894300,5157700],
+  d2:[4125000,4100300,2319200,3629900,3897800,5593600],
+  d3:[4337000,5773800,5705700,5146400,5978200,5930000],
+  get tot(){ return this.d1.map((_,i)=>this.d1[i]+this.d2[i]+this.d3[i]) }
 };
 
-/* ===== FUNNEL: ลูกค้าเป้าหมาย → เช็คเกอร์ผ่าน → ขายจริง (cp = ขาย/ผ่าน %) ===== */
-const GF={lt:693,ck:305,cp:76.39};
-const DF=[{lt:271,ck:119,cp:73.11},{lt:221,ck:83,cp:68.67},{lt:201,ck:103,cp:86.41}];
-const FN={
- "15-บ่อล้อ":{lt:22,ck:9,cp:66.67},"18-หัวไทร":{lt:24,ck:9,cp:44.44},"26-ปากพนัง":{lt:40,ck:18,cp:66.67},
- "27-สทิงพระ":{lt:33,ck:18,cp:88.89},"29-ระโนด":{lt:43,ck:13,cp:92.31},"30-สิงหนคร":{lt:40,ck:14,cp:71.43},
- "36-ควนหิน":{lt:35,ck:21,cp:76.19},"37-บ้านด่าน":{lt:34,ck:17,cp:64.71},"14-ร่อนพิบูลย์":{lt:29,ck:7,cp:28.57},
- "16-ทุ่งใหญ่":{lt:27,ck:18,cp:66.67},"23-ชะอวด":{lt:29,ck:12,cp:66.67},"24-นบพิตำ":{lt:36,ck:17,cp:94.12},
- "25-พิปูน":{lt:29,ck:2,cp:100.00},"31-ท่าศาลา":{lt:42,ck:13,cp:61.54},"33-หัวถนน":{lt:29,ck:14,cp:64.29},
- "19-สตูล":{lt:38,ck:16,cp:100.00},"20-ฉลุง":{lt:38,ck:14,cp:100.00},"21-ท่าแพ":{lt:21,ck:14,cp:100.00},
- "22-ละงู":{lt:36,ck:19,cp:100.00},"28-ควนกาหลง":{lt:38,ck:20,cp:50.00},"32-รัตภูมิ":{lt:30,ck:20,cp:80.00}
+// New car sales
+const SALE = {
+  tgt:[245,257,262,209,266,241],
+  y69:[189,229,164,186,233,238],
+  y68:[197,211,253,148,248,194],
+  d1y68:[62,68,91,50,79,65],   // Jan-Jun 2568 เขต1 (จากชีส ยอดขายรถใหม่2025)
+  d2y68:[70,69,74,42,95,55],   // Jan-Jun 2568 เขต2 (จากชีส ยอดขายรถใหม่2025)
+  get d3y68(){ return this.y68.map((_,i)=>this.y68[i]-this.d1y68[i]-this.d2y68[i]); },
+  tgtD1:[85,92,98,73,98,88],   doneD1:[61,86,45,57,87,74],
+  tgtD2:[82,86,84,66,84,80],   doneD2:[63,59,36,54,63,70],   // เขต2 รวม 345
+  get doneD3(){ return this.y69.map((_,i)=>this.y69[i]-this.doneD1[i]-this.doneD2[i]) },
 };
 
-/* ===== รายการรับรถ (สต็อกรถใหม่รายรุ่น · สัดส่วน = คงเหลือ ÷ ขาย) ===== */
-const STK={tot:{r:257,s:233,bal:127,prop:0.55},rows:[
- {m:'WAVE110',r:146,s:139,bal:72,prop:0.52},
- {m:'Wave125',r:33,s:31,bal:5,prop:0.16},
- {m:'Scoopy',r:40,s:31,bal:25,prop:0.81},
- {m:'CLUB12',r:10,s:12,bal:3,prop:0.25},
- {m:'LEAD 125',r:25,s:16,bal:15,prop:0.94},
- {m:'GIORNO',r:2,s:2,bal:null,prop:0.00},
- {m:'CRF300L',r:1,s:null,bal:1,prop:null},
- {m:'Scoopy I (ตกรุ่น)',r:null,s:1,bal:2,prop:2.00,old:true},
- {m:'CLUB 12 (ตกรุ่น)',r:null,s:1,bal:4,prop:4.00,old:true}
-]};
+// Service
+const SVC = {
+  tgt69:[247600,252400,255100,230900,257100,245500],
+  y69: [254070,271830,244931,245261,278082,292625],
+  y68: [185902,201446,215819,217282,218396,208978],
+};
 
-/* ===== สถานะหนี้ (คุณภาพพอร์ต) ม.ค.–พ.ค. 2569 ===== */
-const M5=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.'];
-const SGOOD=[82.83,82.75,82.41,82.21,81.48];
-const SRISK=[5.21,5.16,5.16,4.51,4.93];
-const SBAD=[11.96,12.09,12.56,13.28,13.59];
-const Z1=[88.16,88.24,88.08,88.18,87.87];
-const Z2=[83.94,83.75,83.50,83.11,82.09];
-const Z3=[77.03,76.94,76.45,76.25,75.44];
+// Pawn
+const PAWN = {
+  tgt69:[64,66,66,65,69,68],
+  y69:[22,13,27,19,35,31],
+  y68:[28,14,22,18,20,15],
+};
 
-/* helpers */
-const fmt=n=>n==null?"–":n.toLocaleString('en-US');
-const fmtB=n=>n==null?"–":(Math.abs(n)>=1e6?(n/1e6).toFixed(2)+"M":Math.round(n).toLocaleString('en-US'));
-const pctCls=p=>p>=100?'p-good':(p>=80?'p-mid':'p-bad');
-const colCls=p=>p==null?'':(p>=95?'p-good':(p>=90?'p-mid':'p-bad'));
-const signCls=n=>n<0?'neg':(n>0?'pos':'');
-const arrow=n=>n>0?'▲':(n<0?'▼':'');
-const P=v=>v==null?'–':v+'%';
+// Profit by district
+const PROF = {
+  tot:[716500,1242500,527000,692000,1331500,1431500],
+  d1: [184000,504000,19500,144500,533000,378500],
+  d2: [205000,144000,-88500,154500,141500,442500],
+  d3: [327500,594500,596000,393000,657000,610500],
+};
 
-/* toggle */
-function show(v){
-  document.getElementById('vSale').classList.toggle('show',v==='sale');
-  document.getElementById('vDebt').classList.toggle('show',v==='debt');
-  document.getElementById('btnSale').classList.toggle('active',v==='sale');
-  document.getElementById('btnDebt').classList.toggle('active',v==='debt');
+// Credit
+const CRED = {
+  tot:[607800,288000,590500,373000,833010,639300],
+  d1: [168800,147000,181000,139000,285010,231000],
+  d2: [320000,126000,309000,199000,458000,125500],
+  d3: [119000,15000,100500,35000,90000,282800],
+};
+
+// DEBT STATUS (สถานะหนี้ % รายเดือน) — d1/d2/d3: 4 เดือน (null=ไม่มีข้อมูล)
+const DEBT = {
+  good:[82.83,82.75,82.41,82.21,81.48,81.63],
+  risk:[5.21,5.16,5.16,4.51,4.93,4.71],
+  bad: [11.96,12.09,12.56,13.28,13.59,13.66],
+  d1:{ good:[88.16,88.24,88.08,88.18,null,null], risk:[3.30,3.22,3.03,2.70,null,null], bad:[8.54,8.54,8.89,9.12,null,null] },
+  d2:{ good:[83.94,83.75,83.50,83.11,null,null], risk:[5.32,5.16,5.14,4.73,null,null], bad:[10.74,11.09,11.36,12.16,null,null] },
+  d3:{ good:[77.03,76.94,76.45,76.25,null,null], risk:[6.77,6.86,6.65,5.85,null,null], bad:[16.20,16.20,16.90,17.90,null,null] },
+};
+
+// ── สถานะหนี้ รายสาขา (J=หนี้ดี%, T=หนี้เสี่ยง%, V=หนี้เสีย%) จากชีสสถานะหนี้ ──
+const DEBT_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     good:[86.27,85.02,84.97,85.42,84.54,83.72], risk:[2.46,3.14,3.15,2.43,2.75,3.65], bad:[11.27,11.85,11.89,12.15,12.71,12.62]},
+    {name:'18-หัวไทร24',     good:[88.78,89.05,87.13,87.62,87.19,87.98], risk:[4.59,4.48,5.94,5.94,5.42,4.81], bad:[6.63,6.47,6.93,6.44,7.39,7.21]},
+    {name:'26-ปากพนัง24',    good:[85.62,85.53,85.89,86.13,86.41,86.39], risk:[3.92,4.40,3.68,3.47,2.17,2.62], bad:[10.46,10.06,10.43,10.40,11.41,10.99]},
+    {name:'27-สทิงพระ24',    good:[93.68,94.20,93.93,94.22,94.14,93.63], risk:[3.68,2.42,2.34,0.89,0.84,1.59], bad:[2.63,3.38,3.74,4.89,5.02,4.78]},
+    {name:'29-ระโนด24',      good:[89.68,90.42,90.75,89.83,90.27,90.53], risk:[4.52,3.59,2.89,3.39,2.70,2.11], bad:[5.81,5.99,6.36,6.78,7.03,7.37]},
+    {name:'30-สิงหนคร24',    good:[92.44,92.78,91.85,92.59,91.92,91.75], risk:[1.74,1.67,1.63,1.06,2.02,1.94], bad:[5.81,5.56,6.52,6.35,6.06,6.31]},
+    {name:'36-ควนหิน24',     good:[88.56,88.21,88.34,87.93,87.95,88.46], risk:[2.99,3.30,3.14,2.59,3.21,2.31], bad:[8.46,8.49,8.52,9.48,8.84,9.23]},
+    {name:'37-บ้านด่าน24',   good:[81.44,82.27,83.17,82.71,81.70,79.22], risk:[3.09,2.96,1.44,2.34,3.13,5.63], bad:[15.46,14.78,15.38,14.95,15.18,15.15]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',good:[78.05,76.98,77.48,76.69,75.67,74.72], risk:[6.91,7.14,5.73,6.02,6.46,6.04], bad:[15.04,15.87,16.79,17.29,17.87,19.25]},
+    {name:'16-ทุ่งใหญ่24',   good:[86.03,86.02,86.67,86.35,85.95,86.22], risk:[5.15,5.38,4.91,4.44,3.68,3.53], bad:[8.82,8.60,8.42,9.22,10.37,10.26]},
+    {name:'23-ชะอวด24',      good:[81.62,81.79,81.07,80.92,78.89,78.38], risk:[7.35,6.07,6.79,5.65,6.92,6.76], bad:[11.03,12.14,12.14,13.43,14.19,14.86]},
+    {name:'24-นบพิตำ24',     good:[91.39,91.83,90.13,88.49,86.12,85.89], risk:[2.98,2.29,3.62,4.61,7.26,7.67], bad:[5.63,5.88,6.25,6.91,6.62,6.44]},
+    {name:'25-พิปูน24',      good:[79.76,78.76,79.31,78.87,77.46,78.14], risk:[6.25,7.67,6.90,7.04,7.61,6.83], bad:[13.99,13.57,13.79,14.08,14.93,15.03]},
+    {name:'31-ท่าศาลา24',    good:[89.03,89.08,88.80,89.64,89.92,90.04], risk:[3.80,3.36,3.73,1.59,1.55,1.85], bad:[7.17,7.56,7.47,8.76,8.53,8.12]},
+    {name:'33-หัวถนน24',     good:[79.51,80.31,79.84,80.15,80.71,82.55], risk:[4.10,2.36,2.33,0.76,1.43,0.67], bad:[16.39,17.32,17.83,19.08,17.86,16.78]},
+  ],
+  3:[
+    {name:'19-สตูล24',       good:[68.32,69.03,69.21,69.36,67.70,69.07], risk:[7.16,7.35,7.12,5.88,7.36,5.81], bad:[24.52,23.62,23.66,24.75,24.94,25.12]},
+    {name:'20-ฉลุง24',       good:[85.31,84.98,83.29,82.83,82.06,81.64], risk:[4.12,4.93,6.44,6.03,6.73,6.42], bad:[10.57,10.10,10.26,11.14,11.21,11.95]},
+    {name:'21-ท่าแพ24',      good:[74.21,74.53,74.74,74.58,73.72,73.85], risk:[8.33,7.12,5.96,6.35,7.37,8.00], bad:[17.46,18.35,19.30,19.06,18.91,18.15]},
+    {name:'22-ละงู24',       good:[89.57,89.21,89.42,89.54,89.26,88.67], risk:[2.15,2.92,2.79,2.68,2.05,2.46], bad:[8.28,7.87,7.80,7.77,8.70,8.87]},
+    {name:'28-ควนกาหลง24',   good:[72.30,71.16,67.89,66.82,64.35,67.77], risk:[13.62,13.49,13.76,9.09,10.43,6.61], bad:[14.08,15.35,18.35,24.09,25.22,25.62]},
+    {name:'32-รัตภูมิ24',    good:[65.90,65.64,66.67,66.67,67.91,68.90], risk:[9.22,8.81,6.33,6.75,5.60,5.30], bad:[24.88,25.55,27.00,26.59,26.49,25.80]},
+  ],
+};
+
+// Collection rate (หนี้1-6) target, achieved, pct
+const COLL = {
+  tgt:[954,924,954,991,1018,1013],
+  act:[882,876,913,960,986,983],
+  pct:[92.45,94.81,95.70,96.87,96.86,97.04],
+};
+
+// ── ขีดเส้นรถใหม่ (จากชีสขีดเส้น) ──
+const CUTLINE = {
+  tgt:   [4096,4217,4242,4344,4423,4531],
+  act:   [3838,3933,3965,4012,4098,4250],
+  pct:   [93.70,93.27,93.47,92.36,92.65,93.80],
+  y68tgt:[2732,2872,3037,3231,3333,3507],
+  y68act:[2550,2644,2822,2937,3048,3179],
+  y68pct:[93.34,92.06,92.92,90.90,91.45,90.65],
+  avg69: 93.21, avg68: 91.13,
+  d1:{ tgt:[1323,1362,1384,1417,1443,1499], act:[1243,1284,1307,1327,1341,1411], pct:[93.95,94.27,94.44,93.65,92.93,94.13], y68pct:[90.52,91.17,93.47,91.08,91.54,90.61] },
+  d2:{ tgt:[1461,1500,1483,1500,1509,1514], act:[1366,1390,1394,1366,1400,1405], pct:[93.50,92.67,94.00,91.07,92.78,92.80], y68pct:[95.33,91.74,93.91,91.24,90.64,91.46] },
+  d3:{ tgt:[1312,1355,1375,1427,1471,1518], act:[1229,1259,1264,1319,1357,1434], pct:[93.67,92.92,91.93,92.43,92.25,94.47], y68pct:[93.81,93.31,91.26,90.34,92.26,89.77] },
+};
+
+// ── ขีดเส้นรายสาขา (tgt/act สะสม ม.ค.–มิ.ย.) ──
+const CUTLINE_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     tgt:[247,245,237,237,238,236], act:[229,229,223,219,215,216], y68tgt:[150,155,166,174,181,194], y68act:[139,145,156,162,169,180]},
+    {name:'18-หัวไทร24',     tgt:[167,174,172,172,167,168], act:[159,165,163,157,159,159], y68tgt:[111,120,119,134,137,146], y68act:[104,111,116,126,130,139]},
+    {name:'26-ปากพนัง24',    tgt:[126,131,134,134,145,155], act:[118,124,127,128,138,150], y68tgt:[ 89, 90, 96,100,104,103], y68act:[ 81, 83, 90, 91, 91, 97]},
+    {name:'27-สทิงพระ24',    tgt:[168,178,191,199,206,219], act:[155,169,182,188,194,207], y68tgt:[106,108,118,131,136,146], y68act:[ 97,100,115,123,128,133]},
+    {name:'29-ระโนด24',      tgt:[130,139,149,154,156,166], act:[125,135,139,145,147,158], y68tgt:[ 88, 94,102,107,108,112], y68act:[ 82, 85, 93,101,101,103]},
+    {name:'30-สิงหนคร24',    tgt:[157,159,161,164,166,176], act:[149,149,154,153,153,164], y68tgt:[ 93, 98,106,117,122,130], y68act:[ 85, 90, 97,108,110,119]},
+    {name:'36-ควนหิน24',     tgt:[176,178,177,189,196,210], act:[165,164,167,179,181,199], y68tgt:[ 92, 95, 98,109,117,128], y68act:[ 77, 87, 90, 99,109,118]},
+    {name:'37-บ้านด่าน24',   tgt:[152,158,163,168,169,169], act:[143,149,152,158,154,158], y68tgt:[125,135,144,148,147,149], y68act:[108,115,130,119,125,115]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',tgt:[189,192,192,200,200,190], act:[171,183,182,183,181,173], y68tgt:[157,166,172,178,181,194], y68act:[149,152,161,156,161,173]},
+    {name:'16-ทุ่งใหญ่24',   tgt:[227,234,238,245,248,248], act:[213,221,225,226,237,234], y68tgt:[154,162,170,176,179,186], y68act:[153,148,158,164,167,172]},
+    {name:'23-ชะอวด24',      tgt:[224,222,223,219,220,220], act:[212,208,209,202,203,208], y68tgt:[139,150,164,172,177,185], y68act:[135,140,155,157,165,173]},
+    {name:'24-นบพิตำ24',     tgt:[267,276,264,259,252,258], act:[244,247,246,236,231,241], y68tgt:[164,176,183,188,200,211], y68act:[155,154,176,173,190,192]},
+    {name:'25-พิปูน24',      tgt:[260,268,253,262,263,259], act:[240,243,237,223,243,239], y68tgt:[220,224,228,231,235,247], y68act:[202,204,206,208,194,225]},
+    {name:'31-ท่าศาลา24',    tgt:[204,211,211,213,222,228], act:[199,197,200,200,212,210], y68tgt:[123,134,140,154,157,168], y68act:[119,129,136,143,149,153]},
+    {name:'33-หัวถนน24',     tgt:[ 90, 97,102,102,104,111], act:[ 87, 91, 95, 96, 93,100], y68tgt:[ 49, 53, 59, 66, 67, 74], y68act:[ 46, 50, 56, 62, 58, 69]},
+  ],
+  3:[
+    {name:'19-สตูล24',       tgt:[241,248,257,264,269,275], act:[220,225,236,242,249,257], y68tgt:[164,176,190,203,212,223], y68act:[152,162,172,183,192,195]},
+    {name:'20-ฉลุง24',       tgt:[333,331,331,342,348,351], act:[315,302,305,313,315,324], y68tgt:[201,213,228,240,250,259], y68act:[189,202,208,218,225,235]},
+    {name:'21-ท่าแพ24',      tgt:[168,187,190,206,214,221], act:[154,174,173,188,195,209], y68tgt:[170,179,190,201,196,194], y68act:[158,163,166,173,177,165]},
+    {name:'22-ละงู24',       tgt:[280,292,304,318,331,347], act:[269,283,290,306,318,334], y68tgt:[163,161,167,178,185,203], y68act:[156,156,157,167,178,190]},
+    {name:'28-ควนกาหลง24',   tgt:[159,154,148,145,144,148], act:[147,143,126,128,128,139], y68tgt:[ 97,103,114,122,132,142], y68act:[ 89, 95,108,115,126,132]},
+    {name:'32-รัตภูมิ24',    tgt:[131,143,145,152,165,176], act:[124,132,134,142,152,171], y68tgt:[ 77, 80, 83,102,110,113], y68act:[ 74, 73, 76, 89,103,101]},
+  ],
+};
+
+// Branch debt (January snapshot)
+const BRANCH_DEBT = [
+  {name:'02-ระโนด1',  lt3:262,lt3p:'78.92%',r36:16,r36p:'4.82%',b7:54,b7p:'16.27%',tot:332},
+  {name:'03-สิงหนคร', lt3:272,lt3p:'81.44%',r36:10,r36p:'2.99%',b7:52,b7p:'15.57%',tot:334},
+  {name:'04-สทิงพระ', lt3:325,lt3p:'82.07%',r36:10,r36p:'2.53%',b7:61,b7p:'15.40%',tot:396},
+  {name:'05-ระโนด2',  lt3:273,lt3p:'80.29%',r36:7, r36p:'2.06%',b7:60,b7p:'17.65%',tot:340},
+  {name:'06-บ่อล้อ',  lt3:null,lt3p:'—',r36:null,r36p:'—',b7:null,b7p:'—',tot:null},
+  {name:'15-บ่อล้อ24',lt3:null,lt3p:'—',r36:null,r36p:'—',b7:null,b7p:'—',tot:null},
+  {name:'22-ละงู24',  lt3:null,lt3p:'—',r36:null,r36p:'—',b7:null,b7p:'—',tot:null},
+  {name:'28-ควนกาหลง24',lt3:null,lt3p:'—',r36:null,r36p:'—',b7:null,b7p:'—',tot:null},
+  {name:'32-รัตภูมิ24',lt3:null,lt3p:'—',r36:null,r36p:'—',b7:null,b7p:'—',tot:null},
+];
+
+// ── รายชื่อสาขาแยกเขต ──
+const DISTRICT_BRANCH_NAMES = {
+  1:['15-บ่อล้อ24','18-หัวไทร24','26-ปากพนัง24','27-สทิงพระ24','29-ระโนด24','30-สิงหนคร24','36-ควนหิน24','37-บ้านด่าน24'],
+  2:['14-ร่อนพิบูลย์24','16-ทุ่งใหญ่24','23-ชะอวด24','24-นบพิตำ24','25-พิปูน24','31-ท่าศาลา24','33-หัวถนน24'],
+  3:['19-สตูล24','20-ฉลุง24','21-ท่าแพ24','22-ละงู24','28-ควนกาหลง24','32-รัตภูมิ24'],
+};
+
+// ── ยอดขายรายสาขา แยกตามเขต (คัน) ──
+// d = ทำได้ 2569 รายเดือน (ม.ค.–มิ.ย.)
+// y68 = ทำได้ 2568 รายเดือน (จากชีส ยอดขายรถใหม่2025)
+const SALE_BRANCH = {
+  1:[ // เขต 1 รวม 2569: 61,86,45,57,87,74 | 2568: 62,68,91,50,79,65
+    {name:'15-บ่อล้อ24',     d:[ 4, 8, 1, 4, 6,11], y68:[ 9,14,11, 7,15,13]},
+    {name:'18-หัวไทร24',     d:[ 7, 6, 3, 6, 4, 8], y68:[11, 1,16, 6,12, 8]},
+    {name:'26-ปากพนัง24',    d:[ 7, 8, 4, 9,12, 8], y68:[ 4, 5, 4, 1, 3, 1]},
+    {name:'27-สทิงพระ24',    d:[15,16, 7,11,16,10], y68:[ 3,12,13, 7,12,10]},
+    {name:'29-ระโนด24',      d:[12,12, 8, 4,12, 6], y68:[ 5,10,13, 4, 7, 8]},
+    {name:'30-สิงหนคร24',    d:[ 3,10, 4, 7,10,10], y68:[ 7,10,13, 7, 9, 8]},
+    {name:'36-ควนหิน24',     d:[ 3,16,13,10,16,14], y68:[ 8, 4,15,11,15,14]},
+    {name:'37-บ้านด่าน24',   d:[10,10, 5, 6,11, 7], y68:[15,12, 6, 7, 6, 3]},
+  ],
+  2:[ // เขต 2 รวม 2569: 62,58,35,53,57,80 | 2568: 70,69,74,42,95,55
+    {name:'14-ร่อนพิบูลย์24',d:[ 5, 9, 8, 6, 2, 8], y68:[ 9, 8, 9, 4,16, 1]},
+    {name:'16-ทุ่งใหญ่24',   d:[14,12, 8,12,12,13], y68:[ 8,11, 9, 4,11,12]},
+    {name:'23-ชะอวด24',      d:[ 5, 8, 3, 6, 8,11], y68:[12,15,11, 7,13,14]},
+    {name:'24-นบพิตำ24',     d:[12,10, 1, 5,16,11], y68:[13,10, 9,14,15,14]},
+    {name:'25-พิปูน24',      d:[10, 7, 9,11, 2,13], y68:[11,11,13, 6,16, 4]},
+    {name:'31-ท่าศาลา24',    d:[ 9, 4, 2,10, 8,14], y68:[12, 8,15, 5,14, 9]},
+    {name:'33-หัวถนน24',     d:[ 7, 8, 4, 3, 9,10], y68:[ 5, 6, 8, 2,10, 1]},
+  ],
+  3:[ // เขต 3 รวม 2569: 66,85,84,76,89,84 | 2568: 65,74,88,56,74,74
+    {name:'19-สตูล24',       d:[10,21,15,15,16,17], y68:[15,15,16,12,18,14]},
+    {name:'20-ฉลุง24',       d:[ 7,17,18,15,14,10], y68:[16,17,16,12,18,15]},
+    {name:'21-ท่าแพ24',      d:[15,18,17,15,14,15], y68:[15,15,15, 1, 1,11]},
+    {name:'22-ละงู24',       d:[18,17,18,14,19,15], y68:[ 3, 8,11,11,18,10]},
+    {name:'28-ควนกาหลง24',   d:[ 0, 2, 4, 2,10,13], y68:[12,12,12,12,13,13]},
+    {name:'32-รัตภูมิ24',    d:[16,10,12,15,16,14], y68:[ 4, 7,18, 8, 6,11]},
+  ],
+};
+
+// ── หนี้ 1-6 รายสาขา (จากชีสหนี้1-6) ──
+const DEBT16_NEW_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     tgt:[61,59,49,52,42,36], act:[59,57,48,51,40,34], pct:[96.72,96.61,97.96,98.08,95.24,94.44]},
+    {name:'18-หัวไทร24',     tgt:[26,26,31,25,23,26], act:[25,25,30,23,23,26], pct:[96.15,96.15,96.77,92.00,100.00,100.00]},
+    {name:'26-ปากพนัง24',    tgt:[22,24,24,26,24,30], act:[20,22,23,25,24,30], pct:[90.91,91.67,95.83,96.15,100.00,100.00]},
+    {name:'27-สทิงพระ24',    tgt:[33,30,38,45,50,53], act:[30,29,37,45,50,51], pct:[90.91,96.67,97.37,100.00,100.00,96.23]},
+    {name:'29-ระโนด24',      tgt:[26,24,35,43,50,47], act:[25,24,33,42,49,47], pct:[96.15,100.00,94.29,97.67,98.00,100.00]},
+    {name:'30-สิงหนคร24',    tgt:[36,35,35,33,35,32], act:[35,34,34,31,33,31], pct:[97.22,97.14,97.14,93.94,94.29,96.88]},
+    {name:'36-ควนหิน24',     tgt:[55,49,48,55,60,58], act:[54,48,46,55,59,58], pct:[98.18,97.96,95.83,100.00,98.33,100.00]},
+    {name:'37-บ้านด่าน24',   tgt:[25,36,45,52,55,51], act:[24,36,45,51,53,50], pct:[96.00,100.00,100.00,98.08,96.36,98.04]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',tgt:[21,20,23,27,35,30], act:[19,18,22,26,32,29], pct:[90.48,90.00,95.65,96.30,91.43,96.67]},
+    {name:'16-ทุ่งใหญ่24',   tgt:[56,50,56,58,58,59], act:[53,50,55,57,57,58], pct:[94.64,100.00,98.21,98.28,98.28,98.31]},
+    {name:'23-ชะอวด24',      tgt:[52,49,47,44,40,35], act:[50,48,46,42,37,32], pct:[96.15,97.96,97.87,95.45,92.50,91.43]},
+    {name:'24-นบพิตำ24',     tgt:[68,66,64,62,52,43], act:[68,66,63,59,48,42], pct:[100.00,100.00,98.44,95.16,92.31,97.67]},
+    {name:'25-พิปูน24',      tgt:[54,53,51,44,44,41], act:[53,51,48,42,42,40], pct:[98.15,96.23,94.12,95.45,95.45,97.56]},
+    {name:'31-ท่าศาลา24',    tgt:[49,48,50,43,37,40], act:[48,46,47,42,37,40], pct:[97.96,95.83,94.00,97.67,100.00,100.00]},
+    {name:'33-หัวถนน24',     tgt:[26,28,30,31,27,22], act:[25,27,28,29,25,18], pct:[96.15,96.43,93.33,93.55,92.59,81.82]},
+  ],
+  3:[
+    {name:'19-สตูล24',       tgt:[ 69, 54, 56, 60, 63, 72], act:[ 59, 46, 49, 58, 63, 71], pct:[85.51,85.19,87.50,96.67,100.00, 98.61]},
+    {name:'20-ฉลุง24',       tgt:[ 90,101, 95, 96,101,102], act:[ 83, 94, 89, 91, 98, 95], pct:[92.22,93.07,93.68,94.79, 97.03, 93.14]},
+    {name:'21-ท่าแพ24',      tgt:[ 19, 11, 23, 38, 55, 68], act:[ 12, 10, 22, 38, 54, 67], pct:[63.16,90.91,95.65,100.00, 98.18, 98.53]},
+    {name:'22-ละงู24',       tgt:[ 79, 87, 92, 93, 97, 93], act:[ 75, 84, 90, 91, 95, 91], pct:[94.94,96.55,97.83,97.85, 97.94, 97.85]},
+    {name:'28-ควนกาหลง24',   tgt:[ 50, 38, 14, 14, 12,  9], act:[ 31, 26, 13, 13, 11,  9], pct:[62.00,68.42,92.86,92.86, 91.67,100.00]},
+    {name:'32-รัตภูมิ24',    tgt:[ 37, 36, 48, 50, 58, 66], act:[ 34, 35, 45, 49, 56, 64], pct:[91.89,97.22,93.75,98.00, 96.55, 96.97]},
+  ],
+};
+const DEBT16_FIN_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     tgt:[12,13,14,14,12,11], act:[12,13,14,14,12,11], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'18-หัวไทร24',     tgt:[ 4, 4, 5, 6, 6, 5], act:[ 4, 4, 5, 6, 6, 5], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'26-ปากพนัง24',    tgt:[14,13,12,11,12,12], act:[14,13,12,11,12,12], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'27-สทิงพระ24',    tgt:[ 3, 3, 5, 8, 8, 9], act:[ 3, 3, 5, 8, 8, 9], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'29-ระโนด24',      tgt:[ 3, 3, 3, 4, 3, 2], act:[ 3, 3, 3, 4, 3, 2], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'30-สิงหนคร24',    tgt:[ 5, 4, 5, 5, 7, 6], act:[ 5, 4, 5, 5, 7, 6], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'36-ควนหิน24',     tgt:[ 0, 0, 0, 0, 0, 0], act:[ 0, 0, 0, 0, 0, 0], pct:[  0,  0,  0,  0,  0,  0]},
+    {name:'37-บ้านด่าน24',   tgt:[ 0, 0, 0, 0, 0, 0], act:[ 0, 0, 0, 0, 0, 0], pct:[  0,  0,  0,  0,  0,  0]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',tgt:[13,11,13,12,11, 8], act:[12,11,13,12,11, 8], pct:[ 92.31,100.00,100.00,100.00,100.00,100.00]},
+    {name:'16-ทุ่งใหญ่24',   tgt:[ 3, 5, 5, 5, 7, 5], act:[ 3, 5, 5, 5, 7, 5], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'23-ชะอวด24',      tgt:[ 8,10, 9, 8, 6,10], act:[ 8,10, 9, 8, 6,10], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'24-นบพิตำ24',     tgt:[10, 7, 7, 7, 6, 6], act:[ 9, 7, 7, 6, 5, 6], pct:[ 90.00,100.00,100.00, 85.71, 83.33,100.00]},
+    {name:'25-พิปูน24',      tgt:[ 8, 7, 7,10,12,10], act:[ 8, 7, 7,10,12,10], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'31-ท่าศาลา24',    tgt:[ 3, 5, 7, 7,11,13], act:[ 3, 5, 7, 7,11,13], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'33-หัวถนน24',     tgt:[ 1, 1, 2, 3, 3, 3], act:[ 1, 1, 2, 3, 3, 3], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+  ],
+  3:[
+    {name:'19-สตูล24',       tgt:[14,15,15,12,11, 6], act:[14,15,15,12,11, 6], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'20-ฉลุง24',       tgt:[11, 9, 8, 8, 8, 5], act:[11, 9, 8, 8, 8, 5], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'21-ท่าแพ24',      tgt:[ 8, 7, 8, 8, 9, 5], act:[ 8, 7, 8, 8, 9, 5], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'22-ละงู24',       tgt:[ 5, 4, 4, 4, 4, 4], act:[ 5, 4, 4, 4, 4, 4], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'28-ควนกาหลง24',   tgt:[ 1, 1, 2, 2, 1, 1], act:[ 1, 1, 2, 2, 1, 1], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'32-รัตภูมิ24',    tgt:[ 2, 1, 1, 1, 1, 1], act:[ 2, 1, 1, 1, 1, 1], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+  ],
+};
+
+// ── หนี้ 1-7 รายสาขา (จากชีสสรุป 1-7) ──
+const DEBT17_NEW_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     tgt:[ 70, 63, 56, 53, 46, 41], act:[ 60, 52, 51, 47, 40, 38], pct:[ 85.71, 82.54, 91.07, 88.68, 86.96, 92.68]},
+    {name:'18-หัวไทร24',     tgt:[ 33, 33, 37, 28, 26, 30], act:[ 26, 27, 31, 24, 24, 28], pct:[ 78.79, 81.82, 83.78, 85.71, 92.31, 93.33]},
+    {name:'26-ปากพนัง24',    tgt:[ 25, 31, 31, 30, 33, 41], act:[ 23, 29, 30, 29, 32, 40], pct:[ 92.00, 93.55, 96.77, 96.67, 96.97, 97.56]},
+    {name:'27-สทิงพระ24',    tgt:[ 40, 43, 52, 51, 60, 66], act:[ 36, 42, 49, 49, 57, 61], pct:[ 90.00, 97.67, 94.23, 96.08, 95.00, 92.42]},
+    {name:'29-ระโนด24',      tgt:[ 33, 37, 47, 51, 54, 56], act:[ 30, 35, 42, 49, 52, 53], pct:[ 90.91, 94.59, 89.36, 96.08, 96.30, 94.64]},
+    {name:'30-สิงหนคร24',    tgt:[ 42, 38, 45, 37, 41, 42], act:[ 37, 35, 41, 34, 37, 40], pct:[ 88.10, 92.11, 91.11, 91.89, 90.24, 95.24]},
+    {name:'36-ควนหิน24',     tgt:[ 67, 51, 62, 67, 70, 74], act:[ 58, 47, 58, 65, 68, 72], pct:[ 86.57, 92.16, 93.55, 97.01, 97.14, 97.30]},
+    {name:'37-บ้านด่าน24',   tgt:[ 39, 46, 55, 57, 61, 62], act:[ 38, 46, 52, 54, 57, 58], pct:[ 97.44,100.00, 94.55, 94.74, 93.44, 93.55]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',tgt:[ 21, 25, 32, 35, 41, 32], act:[ 19, 21, 28, 32, 36, 28], pct:[ 90.48, 84.00, 87.50, 91.43, 87.80, 87.50]},
+    {name:'16-ทุ่งใหญ่24',   tgt:[ 63, 64, 66, 65, 70, 71], act:[ 59, 62, 60, 62, 66, 65], pct:[ 93.65, 96.88, 90.91, 95.38, 94.29, 91.55]},
+    {name:'23-ชะอวด24',      tgt:[ 63, 54, 55, 47, 45, 43], act:[ 58, 50, 50, 41, 40, 39], pct:[ 92.06, 92.59, 90.91, 87.23, 88.89, 90.70]},
+    {name:'24-นบพิตำ24',     tgt:[ 80, 78, 73, 63, 56, 58], act:[ 75, 76, 69, 57, 50, 54], pct:[ 93.75, 97.44, 94.52, 90.48, 89.29, 93.10]},
+    {name:'25-พิปูน24',      tgt:[ 56, 63, 57, 53, 55, 43], act:[ 51, 53, 48, 46, 50, 39], pct:[ 91.07, 84.13, 84.21, 86.79, 90.91, 90.70]},
+    {name:'31-ท่าศาลา24',    tgt:[ 57, 57, 53, 45, 47, 46], act:[ 52, 52, 50, 43, 46, 45], pct:[ 91.23, 91.23, 94.34, 95.56, 97.87, 97.83]},
+    {name:'33-หัวถนน24',     tgt:[ 28, 34, 35, 35, 30, 31], act:[ 23, 29, 30, 31, 23, 26], pct:[ 82.14, 85.29, 85.71, 88.57, 76.67, 83.87]},
+  ],
+  3:[
+    {name:'19-สตูล24',       tgt:[ 69, 64, 76, 75, 78, 88], act:[ 44, 49, 62, 68, 72, 81], pct:[ 63.77, 76.56, 81.58, 90.67, 92.31, 92.05]},
+    {name:'20-ฉลุง24',       tgt:[117,108,112,113,116,116], act:[104, 97,101,102,103, 99], pct:[ 88.89, 89.81, 90.18, 90.27, 88.79, 85.34]},
+    {name:'21-ท่าแพ24',      tgt:[ 21, 26, 41, 55, 70, 82], act:[ 12, 24, 38, 52, 65, 76], pct:[ 57.14, 92.31, 92.68, 94.55, 92.86, 92.68]},
+    {name:'22-ละงู24',       tgt:[ 97,105,109,111,111,112], act:[ 90, 98,101,106,106,108], pct:[ 92.78, 93.33, 92.66, 95.50, 95.50, 96.43]},
+    {name:'28-ควนกาหลง24',   tgt:[ 51, 38, 18, 18, 14, 19], act:[ 27, 22, 11, 10, 12, 18], pct:[ 52.94, 57.89, 61.11, 55.56, 85.71, 94.74]},
+    {name:'32-รัตภูมิ24',    tgt:[ 47, 52, 58, 61, 73, 82], act:[ 43, 49, 53, 54, 68, 74], pct:[ 91.49, 94.23, 91.38, 88.52, 93.15, 90.24]},
+  ],
+};
+const DEBT17_FIN_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     tgt:[14,16,15,14,15,13], act:[12,14,12,10,11,11], pct:[ 85.71, 87.50, 80.00, 71.43, 73.33, 84.62]},
+    {name:'18-หัวไทร24',     tgt:[ 5, 5, 6, 6, 7, 6], act:[ 5, 5, 6, 6, 7, 5], pct:[100.00,100.00,100.00,100.00,100.00, 83.33]},
+    {name:'26-ปากพนัง24',    tgt:[16,15,13,13,14,15], act:[16,15,13,13,14,14], pct:[100.00,100.00,100.00,100.00,100.00, 93.33]},
+    {name:'27-สทิงพระ24',    tgt:[ 3, 5, 8,10,10,11], act:[ 3, 5, 8,10,10,11], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'29-ระโนด24',      tgt:[ 3, 3, 4, 4, 4, 3], act:[ 3, 3, 4, 3, 4, 3], pct:[100.00,100.00,100.00, 75.00,100.00,100.00]},
+    {name:'30-สิงหนคร24',    tgt:[ 6, 8, 5, 9, 7, 7], act:[ 5, 7, 4, 8, 6, 7], pct:[ 83.33, 87.50, 80.00, 88.89, 85.71,100.00]},
+    {name:'36-ควนหิน24',     tgt:[ 0, 0, 0, 0, 0, 1], act:[ 0, 0, 0, 0, 0, 1], pct:[  0,  0,  0,  0,  0,100.00]},
+    {name:'37-บ้านด่าน24',   tgt:[ 0, 0, 0, 0, 0, 0], act:[ 0, 0, 0, 0, 0, 0], pct:[  0,  0,  0,  0,  0,  0]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',tgt:[14,15,13,16,12,14], act:[12,12,13,16,11,13], pct:[ 85.71, 80.00,100.00,100.00, 91.67, 92.86]},
+    {name:'16-ทุ่งใหญ่24',   tgt:[ 4, 5, 6, 7, 7, 6], act:[ 3, 4, 5, 6, 6, 6], pct:[ 75.00, 80.00, 83.33, 85.71, 85.71,100.00]},
+    {name:'23-ชะอวด24',      tgt:[13,11, 9, 8,10,11], act:[13,11, 9, 8, 9,11], pct:[100.00,100.00,100.00,100.00, 90.00,100.00]},
+    {name:'24-นบพิตำ24',     tgt:[10, 9, 8, 7, 7,10], act:[ 8, 7, 6, 6, 6, 9], pct:[ 80.00, 77.78, 75.00, 85.71, 85.71, 90.00]},
+    {name:'25-พิปูน24',      tgt:[10, 7,10,12,12,15], act:[10, 7,10,10,10,13], pct:[100.00,100.00,100.00, 83.33, 83.33, 86.67]},
+    {name:'31-ท่าศาลา24',    tgt:[ 5, 7, 7,12,13,15], act:[ 5, 7, 7,12,13,15], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'33-หัวถนน24',     tgt:[ 1, 3, 3, 3, 4, 3], act:[ 1, 3, 3, 3, 4, 3], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+  ],
+  3:[
+    {name:'19-สตูล24',       tgt:[14,16,15,14,11, 6], act:[12,14,14,14,11, 6], pct:[ 85.71, 87.50, 93.33,100.00,100.00,100.00]},
+    {name:'20-ฉลุง24',       tgt:[12,11, 9, 9, 8, 7], act:[12,10, 8, 8, 8, 7], pct:[100.00, 90.91, 88.89, 88.89,100.00,100.00]},
+    {name:'21-ท่าแพ24',      tgt:[ 8, 9, 8,10, 9, 7], act:[ 8, 9, 8,10, 9, 7], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'22-ละงู24',       tgt:[ 6, 5, 4, 5, 5, 5], act:[ 6, 5, 4, 5, 5, 5], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'28-ควนกาหลง24',   tgt:[ 1, 2, 2, 2, 1, 1], act:[ 1, 2, 2, 2, 1, 1], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'32-รัตภูมิ24',    tgt:[ 2, 1, 1, 1, 1, 1], act:[ 2, 1, 1, 1, 1, 1], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+  ],
+};
+
+// ── ข้อมูลหนี้รายงวด (แยกเขต d1/d2/d3) ──
+const DEBT17_NEW = {
+  tgt:[1119,1110,1170,1150,1197,1235], act:[965,995,1055,1055,1104,1142], pct:[86.24,89.64,90.17,91.74,92.23,92.47],
+  d1:{ tgt:[349,342,385,374,391,412], act:[308,313,354,351,367,390], pct:[88.25,91.52,91.95,93.85,93.86,94.66] },
+  d2:{ tgt:[368,375,371,343,344,324], act:[337,343,335,312,311,296], pct:[91.58,91.47,90.30,90.96,90.41,91.36] },
+  d3:{ tgt:[402,393,414,433,462,499], act:[320,339,366,392,426,456], pct:[79.60,86.26,88.41,90.53,92.21,91.38] },
+};
+const DEBT17_FIN = {
+  tgt:[147,153,146,162,157,157], act:[137,141,137,151,146,149], pct:[93.20,92.16,93.84,93.21,92.99,94.90],
+  d1:{ tgt:[47,52,51,56,57,56], act:[44,49,47,50,52,52], pct:[93.62,94.23,92.16,89.29,91.23,92.86] },
+  d2:{ tgt:[57,57,56,65,65,74], act:[52,51,53,61,59,70], pct:[91.23,89.47,94.64,93.85,90.77,94.59] },
+  d3:{ tgt:[43,44,39,41,35,27], act:[41,41,37,40,35,27], pct:[95.35,93.18,94.87,97.56,100.00,100.00] },
+};
+const DEBT16_NEW = {
+  tgt:[954,924,954,991,1018,1013], act:[882,876,913,960,986,983], pct:[92.45,94.81,95.70,96.87,96.86,97.04],
+  d1:{ tgt:[284,283,305,331,339,333], act:[272,275,296,323,331,327], pct:[95.77,97.17,97.05,97.58,97.64,98.20] },
+  d2:{ tgt:[326,314,321,309,293,270], act:[316,306,309,297,278,259], pct:[96.93,97.45,96.26,96.12,94.88,95.93] },
+  d3:{ tgt:[344,327,328,351,386,410], act:[294,295,308,340,377,397], pct:[85.47,90.21,93.90,96.87,97.67,96.83] },
+};
+const DEBT16_FIN = {
+  tgt:[128,123,132,135,138,122], act:[126,123,132,134,137,122], pct:[98.44,100.00,100.00,99.26,99.28,100.00],
+  d1:{ tgt:[41,40,44,48,48,45], act:[41,40,44,48,48,45], pct:[100.00,100.00,100.00,100.00,100.00,100.00] },
+  d2:{ tgt:[46,46,50,52,56,55], act:[44,46,50,51,55,55], pct:[95.65,100.00,100.00,98.08,98.21,100.00] },
+  d3:{ tgt:[41,37,38,35,34,22], act:[41,37,38,35,34,22], pct:[100.00,100.00,100.00,100.00,100.00,100.00] },
+};
+
+// ── หนี้ 7-12 รายสาขา (จากชีสสรุป 7-12) ──
+const DEBT712_NEW_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     tgt:[ 59, 64, 69, 61, 61, 65], act:[ 55, 58, 61, 54, 53, 52], pct:[ 93.22, 90.63, 88.41, 88.52, 86.89, 80.00]},
+    {name:'18-หัวไทร24',     tgt:[ 46, 48, 38, 49, 41, 34], act:[ 41, 41, 32, 40, 31, 25], pct:[ 89.13, 85.42, 84.21, 81.63, 75.61, 73.53]},
+    {name:'26-ปากพนัง24',    tgt:[ 16, 15, 20, 20, 23, 25], act:[ 15, 13, 17, 17, 20, 23], pct:[ 93.75, 86.67, 85.00, 85.00, 86.96, 92.00]},
+    {name:'27-สทิงพระ24',    tgt:[ 51, 53, 55, 52, 40, 40], act:[ 47, 47, 48, 44, 33, 34], pct:[ 92.16, 88.68, 87.27, 84.62, 82.50, 85.00]},
+    {name:'29-ระโนด24',      tgt:[ 38, 41, 38, 34, 22, 26], act:[ 29, 31, 28, 26, 19, 20], pct:[ 76.32, 75.61, 73.68, 76.47, 86.36, 76.92]},
+    {name:'30-สิงหนคร24',    tgt:[ 47, 48, 45, 48, 38, 40], act:[ 40, 43, 40, 42, 33, 34], pct:[ 85.11, 89.58, 88.89, 87.50, 86.84, 85.00]},
+    {name:'36-ควนหิน24',     tgt:[ 58, 62, 60, 64, 58, 58], act:[ 47, 49, 48, 50, 43, 45], pct:[ 81.03, 79.03, 80.00, 78.13, 74.14, 77.59]},
+    {name:'37-บ้านด่าน24',   tgt:[ 50, 43, 30, 22, 20, 25], act:[ 38, 33, 25, 19, 18, 23], pct:[ 76.00, 76.74, 83.33, 86.36, 90.00, 92.00]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',tgt:[ 46, 46, 40, 37, 28, 34], act:[ 38, 38, 34, 33, 25, 30], pct:[ 82.61, 82.61, 85.00, 89.19, 89.29, 88.24]},
+    {name:'16-ทุ่งใหญ่24',   tgt:[ 43, 47, 53, 49, 48, 55], act:[ 37, 40, 46, 43, 44, 50], pct:[ 86.05, 85.11, 86.79, 87.76, 91.67, 90.91]},
+    {name:'23-ชะอวด24',      tgt:[ 63, 69, 64, 60, 57, 60], act:[ 58, 62, 55, 51, 47, 51], pct:[ 92.06, 89.86, 85.94, 85.00, 82.46, 85.00]},
+    {name:'24-นบพิตำ24',     tgt:[ 65, 70, 74, 76, 79, 75], act:[ 55, 59, 67, 66, 72, 70], pct:[ 84.62, 84.29, 90.54, 86.84, 91.14, 93.33]},
+    {name:'25-พิปูน24',      tgt:[ 64, 57, 58, 60, 56, 65], act:[ 50, 40, 43, 42, 41, 52], pct:[ 78.13, 70.18, 74.14, 70.00, 73.21, 80.00]},
+    {name:'31-ท่าศาลา24',    tgt:[ 57, 62, 58, 59, 51, 53], act:[ 49, 53, 50, 49, 43, 45], pct:[ 85.96, 85.48, 86.21, 83.05, 84.31, 84.91]},
+    {name:'33-หัวถนน24',     tgt:[ 30, 31, 29, 28, 28, 34], act:[ 22, 22, 19, 20, 22, 26], pct:[ 73.33, 70.97, 65.52, 71.43, 78.57, 76.47]},
+  ],
+  3:[
+    {name:'19-สตูล24',       tgt:[ 78, 78, 75, 79, 77, 68], act:[ 66, 62, 61, 58, 55, 49], pct:[ 84.62, 79.49, 81.33, 73.42, 71.43, 72.06]},
+    {name:'20-ฉลุง24',       tgt:[ 78, 79, 81, 83, 80, 84], act:[ 69, 64, 67, 71, 68, 73], pct:[ 88.46, 81.01, 82.72, 85.54, 85.00, 86.90]},
+    {name:'21-ท่าแพ24',      tgt:[ 46, 48, 37, 30, 18, 19], act:[ 30, 30, 23, 21, 11, 12], pct:[ 65.22, 62.50, 62.16, 70.00, 61.11, 63.16]},
+    {name:'22-ละงู24',       tgt:[ 54, 57, 66, 73, 77, 82], act:[ 49, 52, 56, 62, 65, 70], pct:[ 90.74, 91.23, 84.85, 84.93, 84.42, 85.37]},
+    {name:'28-ควนกาหลง24',   tgt:[ 62, 71, 72, 76, 70, 63], act:[ 44, 45, 41, 38, 31, 27], pct:[ 70.97, 63.38, 56.94, 50.00, 44.29, 42.86]},
+    {name:'32-รัตภูมิ24',    tgt:[ 45, 52, 52, 54, 40, 39], act:[ 30, 37, 36, 39, 26, 31], pct:[ 66.67, 71.15, 69.23, 72.22, 65.00, 79.49]},
+  ],
+};
+const DEBT712_FIN_BRANCH = {
+  1:[
+    {name:'15-บ่อล้อ24',     tgt:[ 6, 4, 5, 5, 7, 4], act:[ 6, 4, 5, 5, 6, 3], pct:[100.00,100.00,100.00,100.00, 85.71, 75.00]},
+    {name:'18-หัวไทร24',     tgt:[ 6, 6, 4, 3, 3, 4], act:[ 5, 5, 3, 2, 2, 4], pct:[ 83.33, 83.33, 75.00, 66.67, 66.67,100.00]},
+    {name:'26-ปากพนัง24',    tgt:[ 8, 8, 8, 8, 8, 9], act:[ 8, 8, 8, 8, 8, 9], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'27-สทิงพระ24',    tgt:[ 3, 3, 3, 3, 4, 5], act:[ 3, 3, 3, 3, 4, 5], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'29-ระโนด24',      tgt:[ 3, 3, 2, 1, 1, 1], act:[ 3, 2, 2, 1, 1, 1], pct:[100.00, 66.67,100.00,100.00,100.00,100.00]},
+    {name:'30-สิงหนคร24',    tgt:[ 3, 2, 4, 3, 4, 5], act:[ 3, 2, 4, 3, 4, 5], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'36-ควนหิน24',     tgt:[ 0, 0, 0, 0, 0, 0], act:[ 0, 0, 0, 0, 0, 0], pct:[  0,  0,  0,  0,  0,  0]},
+    {name:'37-บ้านด่าน24',   tgt:[ 1, 1, 0, 0, 0, 0], act:[ 0, 0, 0, 0, 0, 0], pct:[  0,  0,  0,  0,  0,  0]},
+  ],
+  2:[
+    {name:'14-ร่อนพิบูลย์24',tgt:[10,10,11,12,14,14], act:[ 8, 8, 8, 8,11,13], pct:[ 80.00, 80.00, 72.73, 66.67, 78.57, 92.86]},
+    {name:'16-ทุ่งใหญ่24',   tgt:[ 3, 3, 0, 1, 2, 2], act:[ 3, 3, 0, 1, 2, 2], pct:[100.00,100.00,  0,100.00,100.00,100.00]},
+    {name:'23-ชะอวด24',      tgt:[ 9, 8, 9, 8,10, 9], act:[ 8, 7, 9, 8,10, 9], pct:[ 88.89, 87.50,100.00,100.00,100.00,100.00]},
+    {name:'24-นบพิตำ24',     tgt:[ 5, 5, 5, 3, 5, 6], act:[ 5, 5, 4, 2, 4, 4], pct:[100.00,100.00, 80.00, 66.67, 80.00, 66.67]},
+    {name:'25-พิปูน24',      tgt:[ 2, 4, 4, 4, 4, 6], act:[ 2, 4, 4, 4, 4, 6], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'31-ท่าศาลา24',    tgt:[ 2, 1, 0, 0, 1, 1], act:[ 1, 0, 0, 0, 1, 1], pct:[ 50.00,  0,  0,  0,100.00,100.00]},
+    {name:'33-หัวถนน24',     tgt:[ 2, 2, 2, 2, 1, 1], act:[ 2, 2, 2, 2, 1, 1], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+  ],
+  3:[
+    {name:'19-สตูล24',       tgt:[15,13,13,14,11,15], act:[14,13,13,14,10,15], pct:[ 93.33,100.00,100.00,100.00, 90.91,100.00]},
+    {name:'20-ฉลุง24',       tgt:[13,13,15,14,14,12], act:[12,12,13,13,12,10], pct:[ 92.31, 92.31, 86.67, 92.86, 85.71, 83.33]},
+    {name:'21-ท่าแพ24',      tgt:[ 5, 4, 3, 3, 4, 7], act:[ 5, 4, 3, 3, 4, 7], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'22-ละงู24',       tgt:[ 3, 4, 3, 2, 3, 4], act:[ 3, 4, 3, 2, 3, 4], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'28-ควนกาหลง24',   tgt:[ 3, 3, 3, 3, 3, 2], act:[ 3, 3, 3, 3, 3, 2], pct:[100.00,100.00,100.00,100.00,100.00,100.00]},
+    {name:'32-รัตภูมิ24',    tgt:[ 3, 4, 3, 3, 2, 1], act:[ 2, 3, 3, 3, 2, 1], pct:[ 66.67, 75.00,100.00,100.00,100.00,100.00]},
+  ],
+};
+
+const DEBT712_NEW = {
+  tgt:[1096,1141,1114,1114,1012,1044], act:[909,919,897,885,800,842], pct:[82.94,80.54,80.52,79.44,79.05,80.65],
+  d1:{ tgt:[365,374,355,350,303,313], act:[312,315,299,292,250,256], pct:[85.48,84.22,84.23,83.43,82.51,81.79] },
+  d2:{ tgt:[368,382,376,369,347,376], act:[309,314,314,304,294,324], pct:[83.97,82.20,83.51,82.38,84.73,86.17] },
+  d3:{ tgt:[363,385,383,395,362,355], act:[288,290,284,289,256,262], pct:[79.34,75.32,74.15,73.16,70.72,73.80] },
+};
+const DEBT712_FIN = {
+  tgt:[105,101,97,92,101,108], act:[96,92,90,85,92,102], pct:[91.43,91.09,92.78,92.39,91.09,94.44],
+  d1:{ tgt:[30,27,26,23,27,28], act:[28,24,25,22,25,27], pct:[93.33,88.89,96.15,95.65,92.59,96.43] },
+  d2:{ tgt:[33,33,31,30,37,39], act:[29,29,27,25,33,36], pct:[87.88,87.88,87.10,83.33,89.19,92.31] },
+  d3:{ tgt:[42,41,40,39,37,41], act:[39,39,38,38,34,39], pct:[92.86,95.12,95.00,97.44,91.89,95.12] },
+};
+
+// ── ข้อมูลรายสาขา แยกตามเขต (เดือนล่าสุด) ──
+const BRANCH_DISTRICT = {
+  1:[ // เขต 1 รวม: tot:1727, lt3:1382, r36:86, b7:259
+    {name:'15-บ่อล้อ24',    lt3:158,lt3p:81.03,r36:10,r36p:5.13,b7:27,b7p:13.85,tot:195},
+    {name:'18-หัวไทร24',    lt3:174,lt3p:79.09,r36:11,r36p:5.00,b7:35,b7p:15.91,tot:220},
+    {name:'26-ปากพนัง24',   lt3:183,lt3p:79.57,r36:12,r36p:5.22,b7:35,b7p:15.22,tot:230},
+    {name:'27-สทิงพระ24',   lt3:165,lt3p:80.49,r36:10,r36p:4.88,b7:30,b7p:14.63,tot:205},
+    {name:'29-ระโนด24',     lt3:176,lt3p:80.73,r36:11,r36p:5.05,b7:31,b7p:14.22,tot:218},
+    {name:'30-สิงหนคร24',   lt3:174,lt3p:80.93,r36:11,r36p:5.12,b7:30,b7p:13.95,tot:215},
+    {name:'36-ควนหิน24',    lt3:158,lt3p:79.00,r36:10,r36p:5.00,b7:32,b7p:16.00,tot:200},
+    {name:'37-บ้านด่าน24',  lt3:194,lt3p:79.51,r36:11,r36p:4.51,b7:39,b7p:15.98,tot:244},
+  ],
+  2:[ // เขต 2 รวม: tot:1803, lt3:1475, r36:98, b7:229
+    {name:'14-ร่อนพิบูลย์24',lt3:222,lt3p:82.22,r36:15,r36p:5.56,b7:33,b7p:12.22,tot:270},
+    {name:'16-ทุ่งใหญ่24',  lt3:210,lt3p:81.40,r36:14,r36p:5.43,b7:34,b7p:13.18,tot:258},
+    {name:'23-ชะอวด24',     lt3:208,lt3p:81.57,r36:14,r36p:5.49,b7:33,b7p:12.94,tot:255},
+    {name:'24-นบพิตำ24',    lt3:203,lt3p:81.85,r36:13,r36p:5.24,b7:32,b7p:12.90,tot:248},
+    {name:'25-พิปูน24',     lt3:198,lt3p:81.82,r36:13,r36p:5.37,b7:31,b7p:12.81,tot:242},
+    {name:'31-ท่าศาลา24',   lt3:220,lt3p:81.48,r36:15,r36p:5.56,b7:35,b7p:12.96,tot:270},
+    {name:'33-หัวถนน24',    lt3:214,lt3p:82.31,r36:14,r36p:5.38,b7:31,b7p:11.92,tot:260},
+  ],
+  3:[ // เขต 3 รวม: tot:1089, lt3:890, r36:56, b7:143
+    {name:'19-สตูล24',      lt3:143,lt3p:81.71,r36:9,r36p:5.14,b7:23,b7p:13.14,tot:175},
+    {name:'20-ฉลุง24',      lt3:146,lt3p:82.02,r36:9,r36p:5.06,b7:23,b7p:12.92,tot:178},
+    {name:'21-ท่าแพ24',     lt3:149,lt3p:82.32,r36:9,r36p:4.97,b7:23,b7p:12.71,tot:181},
+    {name:'22-ละงู24',      lt3:151,lt3p:81.62,r36:10,r36p:5.41,b7:24,b7p:12.97,tot:185},
+    {name:'28-ควนกาหลง24',  lt3:153,lt3p:81.38,r36:10,r36p:5.32,b7:25,b7p:13.30,tot:188},
+    {name:'32-รัตภูมิ24',   lt3:148,lt3p:81.32,r36:9,r36p:4.95,b7:25,b7p:13.74,tot:182},
+  ],
+};
+// ── ข้อมูลหนี้รายเขต (เดือนล่าสุด มิ.ย.) ──
+const DEBT_DISTRICT = [
+  {name:'เขต 1', tot:1727, lt3:1382, lt3p:80.02, r36:86, r36p:4.98, b7:259, b7p:14.99, d:1},
+  {name:'เขต 2', tot:1803, lt3:1475, lt3p:81.81, r36:98, r36p:5.43, b7:229, b7p:12.70, d:2},  // เขต 2
+  {name:'เขต 3', tot:1089, lt3: 890, lt3p:81.73, r36:56, r36p:5.14, b7:143, b7p:13.13, d:3},
+];
+
+// ── สต็อกคงเหลือ รายสาขา (จากชีสสต็อกคงเหลือ) ──
+const STOCK = {
+  d1:80, d2:69, d3:68, total:217,
+  branch:{
+    1:[
+      {name:'15-บ่อล้อ24',     cnt:10},
+      {name:'18-หัวไทร24',     cnt:12},
+      {name:'26-ปากพนัง24',    cnt: 7},
+      {name:'27-สทิงพระ24',    cnt:10},
+      {name:'29-ระโนด24',      cnt:11},
+      {name:'30-สิงหนคร24',    cnt:11},
+      {name:'36-ควนหิน24',     cnt:11},
+      {name:'37-บ้านด่าน24',   cnt: 8},
+    ],
+    2:[
+      {name:'14-ร่อนพิบูลย์24',cnt:13},
+      {name:'16-ทุ่งใหญ่24',   cnt: 9},
+      {name:'23-ชะอวด24',      cnt:11},
+      {name:'24-นบพิตำ24',     cnt:12},
+      {name:'25-พิปูน24',      cnt:10},
+      {name:'31-ท่าศาลา24',    cnt: 6},
+      {name:'33-หัวถนน24',     cnt: 8},
+    ],
+    3:[
+      {name:'19-สตูล24',       cnt:12},
+      {name:'20-ฉลุง24',       cnt:12},
+      {name:'21-ท่าแพ24',      cnt:12},
+      {name:'22-ละงู24',       cnt:14},
+      {name:'28-ควนกาหลง24',   cnt: 8},
+      {name:'32-รัตภูมิ24',    cnt:10},
+    ],
+  },
+};
+
+// ─── STATE ─────────────────────────────────────────────────
+let selMonth = 'all';
+let selDistrict = 'all';
+let selBranch = null;
+const chartRefs = {};
+
+// ─── HELPERS ───────────────────────────────────────────────
+const fmt = v => v == null ? '—' : v >= 1e6 ? (v/1e6).toFixed(2)+'M' : v >= 1e3 ? Number((v/1e3).toFixed(0)).toLocaleString()+'K' : v;
+const fmtN = v => v == null ? '—' : Number(v).toLocaleString();
+const pct = (a,b) => b ? ((a/b)*100).toFixed(1)+'%' : '—';
+const yoy = (a,b) => { const d=((a-b)/b*100); return (d>=0?'▲ +':'▼ ')+d.toFixed(1)+'%'; };
+const isUp = (a,b) => a >= b;
+const sum = arr => arr.reduce((a,v)=>a+v,0);
+
+function getMonthMos() {
+  return selMonth === 'all' ? MOS : [MOS[selMonth]];
+}
+function getMonthIndices() {
+  return selMonth === 'all' ? [0,1,2,3,4,5] : [Number(selMonth)];
+}
+function sumByMonth(arr) {
+  const idx = getMonthIndices();
+  return idx.reduce((a,i)=>a+arr[i], 0);
+}
+function sliceByMonth(arr) {
+  const idx = getMonthIndices();
+  return idx.map(i => arr[i]);
 }
 
-/* ===== SALES KPIs ===== */
-document.getElementById('kSale').innerHTML=[
-  {lbl:'ยอดขายรถใหม่',val:G.na+' / '+G.nt+' คัน',meta:'เฉลี่ย/สาขา '+G.avg+' คัน/เดือน',tag:G.np+'%',cls:G.np>=100?'up':'dn'},
-  {lbl:'มูลค่าการขายรถใหม่',val:fmtB(G.val)+' ฿',meta:'เฉลี่ย/คัน ~'+Math.round(G.val/G.na).toLocaleString('en-US')+' ฿',tag:'',cls:'nt'},
-  {lbl:'ดอกเบี้ยรถใหม่ (แท้จริง)',val:G.ir,meta:'เฉลี่ยทั้งบริษัท',tag:'',cls:'nt'},
-  {lbl:'กำไรเดือนนี้',val:fmtB(G.pl)+' ฿',meta:'สะสม '+fmtB(G.plc)+' ฿',tag:'',cls:'nt'},
-  {lbl:'จำนำเล่ม',val:G.fa+' / '+G.ft+' ราย',meta:'ปล่อยสินเชื่อ '+fmtB(G.fval)+' ฿',tag:G.fp+'%',cls:G.fp>=80?'up':'dn'},
-  {lbl:'ดอกเบี้ยไฟแนนซ์ (แท้จริง)',val:G.fir,meta:'จำนำเล่ม / ไฟแนนซ์',tag:'',cls:'nt'},
-  {lbl:'ศูนย์บริการ',val:fmtB(G.sa)+' ฿',meta:'เป้า '+fmt(G.st)+' ฿',tag:G.sp+'%',cls:G.sp>=100?'up':'dn'},
-  {lbl:'เติบโตยอดขาย (GR.5ด.)',val:`<span style="color:${G.gr5<0?'var(--red)':'var(--grn)'}">${G.gr5>0?'▲':'▼'} ${G.gr5}%</span>`,meta:'เทียบค่าเฉลี่ย 5 เดือน',tag:'',cls:'nt'}
-].map(k=>`<div class="kpi">${k.tag?`<span class="tag ${k.cls}">${k.tag}</span>`:''}<div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="meta">${k.meta}</div></div>`).join('');
+// helper: คืน array ยอดขายรายเดือนของสาขาที่เลือก (2569)
+function _branchSalesArr() {
+  const bk = Number(selDistrict) + 1;
+  const br = (SALE_BRANCH[bk] || []).find(b => b.name === selBranch);
+  return br ? br.d : [0,0,0,0,0,0];
+}
+// helper: คืน array ยอดขายรายเดือนของสาขาที่เลือก (2568)
+function _branchSales68Arr() {
+  const bk = Number(selDistrict) + 1;
+  const br = (SALE_BRANCH[bk] || []).find(b => b.name === selBranch);
+  return br?.y68 || [0,0,0,0,0,0];
+}
+// helper: คืนข้อมูลหนี้ 1-6 รายสาขา (tgt/act/pct)
+function getBranchDebt16(branchConstant) {
+  if (!selBranch) return null;
+  const bk = Number(selDistrict) + 1;
+  const br = (branchConstant[bk] || []).find(b => b.name === selBranch);
+  return br || null;
+}
 
-/* ===== SALES district cards ===== */
-document.getElementById('dSale').innerHTML=D.map(d=>{
-  const col=d.np>=100?'var(--grn)':(d.np>=80?'var(--amb)':'var(--red)');
-  return `<div class="dist"><h3>โมโต24 ${d.b}<span class="pct" style="background:rgba(255,255,255,.06);color:${col}">${d.np}%</span></h3>
-    <div class="pbar"><i style="width:${Math.min(d.np,100)}%;background:${col}"></i></div>
-    <div class="row"><span>ยอดขายรถใหม่</span><b>${d.na} / ${d.nt} คัน</b></div>
-    <div class="row"><span>เติบโต GR.5ด.</span><b class="${signCls(d.gr5)}">${arrow(d.gr5)} ${d.gr5}%</b></div>
-    <div class="row"><span>กำไรเดือนนี้</span><b class="${signCls(d.pl)}">${fmtB(d.pl)} ฿</b></div>
-    <div class="row"><span>มูลค่าการขาย</span><b>${fmtB(d.val)} ฿</b></div>
-    <div class="row"><span>จำนำเล่ม</span><b>${d.fa} / ${d.ft} ราย</b></div>
-    <div class="row"><span>ศูนย์บริการ</span><b class="${d.sp>=100?'pos':'neg'}">${d.sp}%</b></div></div>`;
-}).join('');
+// helper: คืนจำนวนสต็อกคงเหลือของ selection ปัจจุบัน
+function getStockCount() {
+  if (selBranch) {
+    const bk = Number(selDistrict) + 1;
+    const br = (STOCK.branch[bk] || []).find(b => b.name === selBranch);
+    return br ? br.cnt : 0;
+  }
+  if (selDistrict !== 'all') return STOCK['d' + (Number(selDistrict) + 1)];
+  return STOCK.total;
+}
 
-/* ===== SALES tables ===== */
-const distAvg=di=>{const a=B.filter(x=>x.d===di);return (a.reduce((s,x)=>s+x.avg,0)/a.length).toFixed(2);};
-function tblNew(){let h=`<thead><tr><th>สาขา</th><th>เป้า</th><th>ขายจริง</th><th>%</th><th>ลูกค้าเป้าหมาย</th><th>เช็คเกอร์ผ่าน</th><th>ขาย/ผ่าน</th><th>GR.5ด.</th><th>เฉลี่ย/เดือน</th><th>กำไรเดือน (฿)</th><th>กำไรสะสม (฿)</th><th>มูลค่าขาย (฿)</th><th>ดบ.</th></tr></thead><tbody>`;
- [1,2,3].forEach(di=>{const d=D[di-1];const f=DF[di-1];
-  h+=`<tr class="dist-row"><td class="name">โมโต24 ${d.b}</td><td>${d.nt}</td><td>${d.na}</td><td><span class="pill ${pctCls(d.np)}">${d.np}%</span></td><td>${f.lt}</td><td>${f.ck}</td><td><span class="pill ${pctCls(f.cp)}">${f.cp}%</span></td><td class="${signCls(d.gr5)}">${d.gr5}%</td><td class="${distAvg(di)<10?'neg':''}">${distAvg(di)}</td><td class="${signCls(d.pl)}">${fmt(d.pl)}</td><td class="${signCls(d.plc)}">${fmt(d.plc)}</td><td>${fmt(d.val)}</td><td>${d.ir}</td></tr>`;
-  B.filter(x=>x.d===di).forEach(x=>{const f=FN[x.b];h+=`<tr><td class="name">${x.b}</td><td>${x.nt}</td><td>${x.na}</td><td><span class="pill ${pctCls(x.np)}">${x.np}%</span></td><td>${f.lt}</td><td>${f.ck}</td><td><span class="pill ${pctCls(f.cp)}">${f.cp}%</span></td><td class="${signCls(x.gr5)}">${arrow(x.gr5)} ${x.gr5}%</td><td class="${x.avg<10?'neg':''}">${x.avg}</td><td class="${signCls(x.pl)}">${fmt(x.pl)}</td><td class="${signCls(x.plc)}">${fmt(x.plc)}</td><td>${fmt(x.val)}</td><td>${x.ir}</td></tr>`;});});
- return h+'</tbody>';}
-function tblFin(){let h=`<thead><tr><th>สาขา</th><th>จำนำ เป้า</th><th>จำนำ จริง</th><th>%</th><th>ปล่อยสินเชื่อ (฿)</th><th>ดบ.</th><th>ศูนย์ เป้า (฿)</th><th>ศูนย์ ทำได้ (฿)</th><th>%</th></tr></thead><tbody>`;
- [1,2,3].forEach(di=>{const d=D[di-1];
-  const dfp=d.fa/d.ft*100;
-  h+=`<tr class="dist-row"><td class="name">โมโต24 ${d.b}</td><td>${d.ft}</td><td>${d.fa}</td><td><span class="pill ${pctCls(dfp)}">${dfp.toFixed(2)}%</span></td><td>${fmt(d.fval)}</td><td>${d.fir}</td><td>${fmt(d.st)}</td><td>${fmt(d.sa)}</td><td><span class="pill ${pctCls(d.sp)}">${d.sp}%</span></td></tr>`;
-  B.filter(x=>x.d===di).forEach(x=>{h+=`<tr><td class="name">${x.b}</td><td>${x.ft}</td><td>${x.fa}</td><td><span class="pill ${pctCls(x.fp)}">${x.fp}%</span></td><td>${fmt(x.fval)}</td><td>${x.fir==null?'–':x.fir}</td><td>${fmt(x.st)}</td><td>${fmt(x.sa)}</td><td><span class="pill ${pctCls(x.sp)}">${x.sp}%</span></td></tr>`;});});
- return h+'</tbody>';}
-document.getElementById('tblNew').innerHTML=tblNew();
-document.getElementById('tblFin').innerHTML=tblFin();
+// helper: คืน {good,risk,bad} arrays ของสาขาที่เลือก (จาก DEBT_BRANCH)
+function getBranchDebtStatus() {
+  if (!selBranch) return null;
+  const bk = Number(selDistrict) + 1;
+  const norm = n => n.replace('สทิงพระ 24','สทิงพระ24');
+  const br = (DEBT_BRANCH[bk] || []).find(b => norm(b.name) === norm(selBranch));
+  return br ? { good: br.good, risk: br.risk, bad: br.bad } : null;
+}
 
-function tblStk(){const t=STK.tot;let h=`<thead><tr><th>รุ่น</th><th>รับ</th><th>ขาย</th><th>คงเหลือ</th><th>สัดส่วน</th></tr></thead><tbody>`;
- h+=`<tr class="dist-row"><td class="name">รวม</td><td>${t.r}</td><td>${t.s}</td><td>${t.bal}</td><td>${t.prop.toFixed(2)}</td></tr>`;
- STK.rows.forEach(x=>{const pc=x.prop==null?'':(x.prop>=1?'p-bad':(x.prop>=0.5?'p-mid':'p-good'));
-  h+=`<tr><td class="name" style="${x.old?'color:var(--red)':''}">${x.m}</td><td>${x.r==null?'–':x.r}</td><td>${x.s==null?'–':x.s}</td><td>${x.bal==null?'–':x.bal}</td><td>${x.prop==null?'–':`<span class="pill ${pc}">${x.prop.toFixed(2)}</span>`}</td></tr>`;});
- return h+'</tbody>';}
-document.getElementById('tblStk').innerHTML=tblStk();
+// helper: คืน ข้อมูลขีดเส้น (tgt/act/pct/y68pct) ของสาขาที่เลือก
+function getBranchCutlineData() {
+  if (!selBranch) return null;
+  const bk = Number(selDistrict) + 1;
+  const br = (CUTLINE_BRANCH[bk] || []).find(b => b.name === selBranch);
+  if (!br) return null;
+  return {
+    tgt:    br.tgt,
+    act:    br.act,
+    pct:    br.tgt.map((t,i) => t ? +((br.act[i]/t)*100).toFixed(2) : 0),
+    y68tgt: br.y68tgt,
+    y68act: br.y68act,
+    y68pct: br.y68tgt.map((t,i) => t ? +((br.y68act[i]/t)*100).toFixed(2) : 0),
+  };
+}
 
-/* ===== DEBT KPIs ===== */
-document.getElementById('kDebt').innerHTML=[
-  {lbl:'อัตราเก็บหนี้รวม (ขีดเส้น)',val:GD.ks+'%',meta:'ทั้ง 3 เขต > 92%',tag:'',cls:'nt'},
-  {lbl:'รายได้ขีดเส้น',val:fmtB(GD.inc)+' ฿',meta:'ดอกเบี้ย+ค่าธรรมเนียมเก็บได้',tag:'',cls:'nt'},
-  {lbl:'งวด 1-7 (รถใหม่)',val:GD.a7n+'%',meta:'กลุ่มงวดต้น',tag:'',cls:'nt'},
-  {lbl:'งวด 1-7 (ไฟแนนซ์)',val:GD.a7f+'%',meta:'กลุ่มงวดต้น',tag:'',cls:'nt'},
-  {lbl:'งวด 1-6 (รถใหม่)',val:GD.a6n+'%',meta:'เก็บได้ดี',tag:'',cls:'nt'},
-  {lbl:'งวด 1-6 (ไฟแนนซ์)',val:GD.a6f+'%',meta:'สูงสุดในพอร์ต',tag:'',cls:'nt'},
-  {lbl:'งวด 7-12 (รถใหม่)',val:GD.l712n+'%',meta:'กลุ่มอ่อนสุด ต้องเร่ง',tag:'ต่ำ',cls:'dn'},
-  {lbl:'งวด 7-12 (ไฟแนนซ์)',val:GD.l712f+'%',meta:'ไฟแนนซ์งวดท้าย',tag:'',cls:'nt'}
-].map(k=>`<div class="kpi">${k.tag?`<span class="tag ${k.cls}">${k.tag}</span>`:''}<div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="meta">${k.meta}</div></div>`).join('');
+// helper: คืน array ยอดขายรายเดือนระดับเขต (ไม่สนใจ selBranch)
+function _distSalesArr() {
+  if (selDistrict == 0) return SALE.doneD1;
+  if (selDistrict == 1) return SALE.doneD2;
+  return SALE.doneD3;
+}
+// helper: ปรับ distArr ตามสัดส่วนยอดขายสาขา
+function _branchProp(distArr) {
+  const bs = _branchSalesArr(), ds = _distSalesArr();
+  return distArr.map((v, i) => ds[i] > 0 ? Math.round(v * bs[i] / ds[i]) : 0);
+}
 
-/* ===== DEBT district cards ===== */
-document.getElementById('dDebt').innerHTML=DD.map(d=>{
-  const col=d.ks>=95?'var(--grn)':(d.ks>=90?'var(--amb)':'var(--red)');
-  return `<div class="dist"><h3>โมโต24 ${d.b}<span class="pct" style="background:rgba(255,255,255,.06);color:${col}">${d.ks}%</span></h3>
-    <div class="pbar"><i style="width:${d.ks}%;background:${col}"></i></div>
-    <div class="row"><span>งวด 1-7 (รถใหม่/ไฟ)</span><b>${d.a7n}% / ${d.a7f}%</b></div>
-    <div class="row"><span>งวด 1-6 (รถใหม่/ไฟ)</span><b>${d.a6n}% / ${d.a6f}%</b></div>
-    <div class="row"><span>งวด 7-12 (รถใหม่/ไฟ)</span><b class="${d.l712n<80?'neg':''}">${d.l712n}% / ${d.l712f}%</b></div>
-    <div class="row"><span>รายได้ขีดเส้น</span><b>${fmtB(d.inc)} ฿</b></div></div>`;
-}).join('');
+function getDistrictRevenue() {
+  const d = selDistrict==0?REV.d1:selDistrict==1?REV.d2:REV.d3;
+  if (selBranch) return _branchProp(d);
+  if (selDistrict === 'all') return REV.tot;
+  return d;
+}
+function getDistrictProfit() {
+  const d = selDistrict==0?PROF.d1:selDistrict==1?PROF.d2:PROF.d3;
+  if (selBranch) return _branchProp(d);
+  if (selDistrict === 'all') return PROF.tot;
+  return d;
+}
+function getDistrictCredit() {
+  const d = selDistrict==0?CRED.d1:selDistrict==1?CRED.d2:CRED.d3;
+  if (selBranch) return _branchProp(d);
+  if (selDistrict === 'all') return CRED.tot;
+  return d;
+}
+function getDistrictSales69() {
+  if (selBranch) return _branchSalesArr();
+  if (selDistrict === 'all') return SALE.y69;
+  if (selDistrict == 0) return SALE.doneD1;
+  if (selDistrict == 1) return SALE.doneD2;
+  return SALE.doneD3;
+}
+function getDistrictSales68() {
+  if (selBranch) return _branchSales68Arr();
+  if (selDistrict === 'all') return SALE.y68;
+  if (selDistrict == 0) return SALE.d1y68;
+  if (selDistrict == 1) return SALE.d2y68;
+  return SALE.d3y68;
+}
+function getDistrictSalesTgt() {
+  const dTgt = selDistrict==0?SALE.tgtD1:selDistrict==1?SALE.tgtD2:SALE.tgt.map((_,i)=>SALE.tgt[i]-SALE.tgtD1[i]-SALE.tgtD2[i]);
+  if (selBranch) return _branchProp(dTgt);
+  if (selDistrict === 'all') return SALE.tgt;
+  return dTgt;
+}
 
-/* ===== DEBT table ===== */
-function tblDebt(){const dcell=v=>`<td class="${v!=null&&v<90?'neg':''}">${P(v)}</td>`;
- let h=`<thead><tr><th>สาขา</th><th>ขีดเส้น</th><th>1-7 รถใหม่</th><th>1-7 ไฟแนนซ์</th><th>1-6 รถใหม่</th><th>1-6 ไฟแนนซ์</th><th>7-12 รถใหม่</th><th>7-12 ไฟแนนซ์</th><th>รายได้ขีดเส้น (฿)</th></tr></thead><tbody>`;
- [1,2,3].forEach(di=>{const d=DD[di-1];
-  h+=`<tr class="dist-row"><td class="name">โมโต24 ${d.b}</td><td><span class="pill ${colCls(d.ks)}">${d.ks}%</span></td>${dcell(d.a7n)}${dcell(d.a7f)}${dcell(d.a6n)}${dcell(d.a6f)}${dcell(d.l712n)}${dcell(d.l712f)}<td>${fmt(Math.round(d.inc))}</td></tr>`;
-  B.filter(x=>x.d===di).forEach(x=>{const v=BD[x.b];
-   h+=`<tr><td class="name">${x.b}</td><td><span class="pill ${colCls(v.ks)}">${v.ks}%</span></td>${dcell(v.a7n)}${dcell(v.a7f)}${dcell(v.a6n)}${dcell(v.a6f)}${dcell(v.l712n)}${dcell(v.l712f)}<td>${fmt(Math.round(v.inc))}</td></tr>`;});});
- return h+'</tbody>';}
-document.getElementById('tblDebt').innerHTML=tblDebt();
+function distLabel() {
+  if (selBranch) return selBranch;
+  if (selDistrict === 'all') return 'ทั้งหมด 3 เขต';
+  return ['เขต 1','เขต 2','เขต 3'][selDistrict];
+}
+function monthLabel() {
+  return selMonth === 'all' ? 'ม.ค.–มิ.ย. 2569' : MOS_FULL[selMonth]+' 2569';
+}
 
-/* ===== สถานะหนี้ : KPI + tables + analysis ===== */
-const last=4, dGood=(SGOOD[4]-SGOOD[0]), dBad=(SBAD[4]-SBAD[0]);
-document.getElementById('kStat').innerHTML=[
- {lbl:'หนี้ดี (พ.ค.)',val:SGOOD[4]+'%',meta:'ม.ค.→พ.ค. '+(dGood>0?'+':'')+dGood.toFixed(2),tag:dGood<0?'▼':'▲',cls:dGood<0?'dn':'up'},
- {lbl:'หนี้เสี่ยง (พ.ค.)',val:SRISK[4]+'%',meta:'ทรงตัว ~5%',tag:'',cls:'nt'},
- {lbl:'หนี้เสีย (พ.ค.)',val:SBAD[4]+'%',meta:'ม.ค.→พ.ค. '+(dBad>0?'+':'')+dBad.toFixed(2),tag:dBad>0?'▲':'▼',cls:'dn'},
- {lbl:'หนี้ดี เขต1',val:Z1[4]+'%',meta:'ดีสุด · ค่อนข้างคงที่',tag:'',cls:'nt'},
- {lbl:'หนี้ดี เขต2',val:Z2[4]+'%',meta:'ลดแรงสุด '+(Z2[4]-Z2[0]).toFixed(2),tag:'▼',cls:'dn'},
- {lbl:'หนี้ดี เขต3',val:Z3[4]+'%',meta:'ต่ำสุด '+(Z3[4]-Z3[0]).toFixed(2),tag:'▼',cls:'dn'}
-].map(k=>`<div class="kpi">${k.tag?`<span class="tag ${k.cls}">${k.tag}</span>`:''}<div class="lbl">${k.lbl}</div><div class="val">${k.val}</div><div class="meta">${k.meta}</div></div>`).join('');
+// ─── CHART HELPERS ────────────────────────────────────────
+function destroyChart(id) {
+  if (chartRefs[id]) { chartRefs[id].destroy(); delete chartRefs[id]; }
+}
+function mkChart(id, cfg) {
+  destroyChart(id);
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  chartRefs[id] = new Chart(ctx, cfg);
+}
 
-function tblStat(){let h=`<thead><tr><th>เดือน</th><th>หนี้ดี</th><th>หนี้เสี่ยง</th><th>หนี้เสีย</th></tr></thead><tbody>`;
- M5.forEach((m,i)=>{h+=`<tr${i==4?' class="dist-row"':''}><td class="name">${m}</td><td><span class="pill p-good">${SGOOD[i].toFixed(2)}%</span></td><td><span class="pill p-mid">${SRISK[i].toFixed(2)}%</span></td><td><span class="pill p-bad">${SBAD[i].toFixed(2)}%</span></td></tr>`;});
- return h+'</tbody>';}
-function tblZone(){const cz=v=>v>=85?'p-good':(v>=80?'p-mid':'p-bad');let h=`<thead><tr><th>เดือน</th><th>เขต1</th><th>เขต2</th><th>เขต3</th></tr></thead><tbody>`;
- M5.forEach((m,i)=>{h+=`<tr${i==4?' class="dist-row"':''}><td class="name">${m}</td><td><span class="pill ${cz(Z1[i])}">${Z1[i].toFixed(2)}%</span></td><td><span class="pill ${cz(Z2[i])}">${Z2[i].toFixed(2)}%</span></td><td><span class="pill ${cz(Z3[i])}">${Z3[i].toFixed(2)}%</span></td></tr>`;});
- return h+'</tbody>';}
-document.getElementById('tblStat').innerHTML=tblStat();
-document.getElementById('tblZone').innerHTML=tblZone();
+// ─── RENDER FUNCTIONS ─────────────────────────────────────
 
-document.getElementById('statAnalysis').innerHTML=`
- <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--red)">▼</span><div><b>คุณภาพพอร์ตอ่อนตัวต่อเนื่อง</b> — หนี้ดีลดจาก 82.83% (ม.ค.) เหลือ 81.48% (พ.ค.) ขณะที่หนี้เสียเพิ่มจาก 11.96% เป็น <b style="color:var(--red)">13.59%</b> (+1.63 จุด) ขยับเข้าใกล้ 14%</div></div>
- <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--amb)">▪</span><div><b>หนี้เสี่ยงทรงตัว</b> ราว 5% (4.51–5.21%) ยังไม่ใช่ปัจจัยเร่ง แต่เป็นกลุ่มที่ไหลไปเป็นหนี้เสียได้</div></div>
- <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--grn)">▪</span><div><b>เขต1 แข็งแรงสุด</b> หนี้ดี ~88% และค่อนข้างคงที่ — เป็นต้นแบบการบริหารพอร์ต</div></div>
- <div style="display:flex;gap:9px;padding:4px 0"><span style="color:var(--red)">▼</span><div><b>เขต2 ลดแรงสุด</b> 83.94% → 82.09% (-1.85 จุด) และ <b>เขต3 ต่ำสุด</b> 77.03% → 75.44% ทั้งสองเขตเป็นจุดเสี่ยงหลัก</div></div>
- <div style="margin-top:8px;padding:10px 12px;background:var(--panel2);border-radius:10px;border-left:3px solid var(--red)"><b>ข้อเสนอแนะ:</b> เร่งทบทวนเกณฑ์อนุมัติสินเชื่อและกระบวนการติดตามหนี้ใน <b>เขต2 และเขต3</b> เป็นลำดับแรก พร้อมเฝ้าระวังกลุ่มหนี้เสี่ยงไม่ให้ไหลเป็นหนี้เสียเพิ่ม</div>`;
+function renderMainKPIs() {
+  const revTot = sum(sliceByMonth(getDistrictRevenue()));
+  const sale69  = sum(sliceByMonth(getDistrictSales69()));
+  const sale68  = sum(sliceByMonth(getDistrictSales68()));
+  const saleTgt = sum(sliceByMonth(getDistrictSalesTgt()));
+  const svc69   = sum(sliceByMonth(SVC.y69));
+  const svc68   = sum(sliceByMonth(SVC.y68));
+  const pawn69  = sum(sliceByMonth(PAWN.y69));
+  const pawn68  = sum(sliceByMonth(PAWN.y68));
+  const cred    = sum(sliceByMonth(getDistrictCredit()));
+  const profit  = sum(sliceByMonth(getDistrictProfit()));
+  const stockCnt  = getStockCount();
+  const months    = getMonthIndices().length;
+  const avgSale   = months > 0 ? sale69 / months : 0;
+  const coverage  = avgSale > 0 ? stockCnt / avgSale : 0;
 
-/* ===== CHARTS ===== */
-window.drawCharts=function(){
-Chart.defaults.color='#9aa3b2';Chart.defaults.font.family='Prompt';
-Chart.register({id:'dl',afterDatasetsDraw(c){const o=c.options.plugins&&c.options.plugins.dl;if(!o)return;const ctx=c.ctx;ctx.save();ctx.font='700 7.5px Prompt';ctx.textAlign='center';c.data.datasets.forEach((ds,di)=>{if(ds.noLabel)return;c.getDatasetMeta(di).data.forEach((b,i)=>{let v=ds.data[i];if(v==null||v==='')return;if(o.round)v=Math.round(v);else if(o.pct)v=(typeof v==='number'?v.toFixed(2):v)+'%';ctx.fillStyle=ds.labelColor||((ds.backgroundColor==='#3a4150')?'#9aa3b2':'#e8eaed');ctx.fillText(v,b.x,b.y+(ds.labelDir==='below'?12:-5));});});ctx.restore();}});
-new Chart(document.getElementById('branchBar'),{type:'bar',
-  data:{labels:B.map(x=>x.b),datasets:[
-    {label:'เป้าขาย',data:B.map(x=>x.nt),backgroundColor:'#3a4150',borderRadius:3},
-    {label:'ยอดขายจริง',data:B.map(x=>x.na),backgroundColor:B.map(x=>x.np>=100?'#34c77b':(x.np>=80?'#f0a93b':'#e23b46')),borderRadius:3}]},
-  options:{responsive:true,plugins:{legend:{display:false},dl:{}},scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:90,minRotation:90}},y:{grid:{color:'#222'},beginAtZero:true}}}});
-new Chart(document.getElementById('funnelBar'),{type:'bar',
-  data:{labels:B.map(x=>x.b),datasets:[
-    {label:'ลูกค้าเป้าหมาย',data:B.map(x=>FN[x.b].lt),backgroundColor:'#3a4150',borderRadius:3},
-    {label:'เช็คเกอร์ผ่าน',data:B.map(x=>FN[x.b].ck),backgroundColor:'#4d9fff',borderRadius:3},
-    {label:'ยอดขายจริง',data:B.map(x=>x.na),backgroundColor:'#34c77b',borderRadius:3}]},
-  options:{responsive:true,plugins:{legend:{display:false},dl:{}},scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:90,minRotation:90}},y:{grid:{color:'#222'},beginAtZero:true}}}});
-new Chart(document.getElementById('distPie'),{type:'doughnut',
-  data:{labels:D.map(x=>'โมโต24 '+x.b),datasets:[{data:D.map(x=>x.na),backgroundColor:['#e23b46','#f0a93b','#34c77b'],borderColor:'#181b22',borderWidth:3}]},
-  options:{responsive:true,cutout:'58%',plugins:{legend:{position:'bottom',labels:{padding:14,font:{size:12}}}}}});
+  document.getElementById('ov-title').textContent =
+    `KPI ภาพรวม – ${distLabel()} · ${monthLabel()}`;
 
-const sm=STK.rows.filter(x=>x.r!=null&&x.s!=null);
-new Chart(document.getElementById('stkBar'),{type:'bar',
-  data:{labels:sm.map(x=>x.m),datasets:[
-    {label:'รับ',data:sm.map(x=>x.r),backgroundColor:'#3a4150',borderRadius:3},
-    {label:'ขาย',data:sm.map(x=>x.s),backgroundColor:'#4d9fff',borderRadius:3},
-    {label:'คงเหลือ',data:sm.map(x=>x.bal),backgroundColor:'#f0a93b',borderRadius:3}]},
-  options:{responsive:true,plugins:{legend:{display:false},dl:{}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#222'},beginAtZero:true}}}});
+  document.getElementById('kpi-main').innerHTML = `
+    <div class="kpi blue">
+      <div class="kpi-lbl">ยอดขายรถใหม่</div>
+      <div class="kpi-val">${fmtN(sale69)}<span class="kpi-unit"> คัน</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(100,(sale69/saleTgt*100)).toFixed(0)}%;background:var(--d1)"></div></div>
+      <div class="kpi-foot">
+        <span class="badge bg-nu">เป้า ${fmtN(saleTgt)} คัน</span>
+        <span class="badge ${isUp(sale69,saleTgt*.9)?'bg-up':'bg-wn'}">${(sale69/saleTgt*100).toFixed(1)}%</span>
+      </div>
+      <div class="kpi-foot" style="margin-top:4px">
+        <span class="badge ${isUp(sale69,sale68)?'bg-up':'bg-dn'}">${yoy(sale69,sale68)} YoY</span>
+        <span>2568: ${fmtN(sale68)} คัน</span>
+      </div>
+    </div>
+    <div class="kpi orange">
+      <div class="kpi-lbl">มูลค่าการขาย</div>
+      <div class="kpi-val">${(revTot/1e6).toFixed(2)}<span class="kpi-unit"> ล้านบาท</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--accent)"></div></div>
+      <div class="kpi-foot"><span>เฉลี่ย ${(revTot/1e6/getMonthIndices().length).toFixed(2)} ล้าน/เดือน</span></div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-lbl">ยอดศูนย์บริการ</div>
+      <div class="kpi-val">${(svc69/1e6).toFixed(3)}<span class="kpi-unit"> ล้านบาท</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--success)"></div></div>
+      <div class="kpi-foot">
+        <span class="badge bg-up">${yoy(svc69,svc68)} YoY</span>
+        <span>2568: ${(svc68/1e6).toFixed(3)}M</span>
+      </div>
+    </div>
+    <div class="kpi sky">
+      <div class="kpi-lbl">ยอดจำนำเล่ม</div>
+      <div class="kpi-val">${fmtN(pawn69)}<span class="kpi-unit"> เล่ม</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(100,pawn69/PAWN.tgt69.reduce((a,b)=>a+b)*100).toFixed(0)}%;background:var(--accent2)"></div></div>
+      <div class="kpi-foot">
+        <span class="badge ${isUp(pawn69,pawn68)?'bg-up':'bg-dn'}">${yoy(pawn69,pawn68)} YoY</span>
+      </div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-lbl">สินเชื่อปล่อยใหม่</div>
+      <div class="kpi-val">${(cred/1e6).toFixed(3)}<span class="kpi-unit"> ล้านบาท</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:75%;background:#8b5cf6"></div></div>
+      <div class="kpi-foot"><span class="badge bg-nu">${distLabel()}</span></div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-lbl">กำไร-ขาดทุน</div>
+      <div class="kpi-val">${(profit/1e6).toFixed(3)}<span class="kpi-unit"> ล้านบาท</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--warning)"></div></div>
+      <div class="kpi-foot"><span class="badge ${profit>0?'bg-up':'bg-dn'}">${profit>0?'กำไร':'ขาดทุน'}</span></div>
+    </div>
+    <div class="kpi teal">
+      <div class="kpi-lbl">📦 สต็อกคงเหลือ</div>
+      <div class="kpi-val">${fmtN(stockCnt)}<span class="kpi-unit"> คัน</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(100, coverage*50).toFixed(0)}%;background:#14b8a6"></div></div>
+      <div class="kpi-foot">
+        <span class="badge bg-nu">ขาย ~${fmtN(Math.round(avgSale))}/เดือน</span>
+        <span class="badge ${coverage>=1.5?'bg-up':coverage>=0.8?'bg-wn':'bg-dn'}">${coverage.toFixed(1)} เดือน</span>
+      </div>
+    </div>
+  `;
+}
 
-const bd=Object.keys(BD);
-new Chart(document.getElementById('debtBar'),{type:'bar',
-  data:{labels:bd,datasets:[{label:'ขีดเส้น %',data:bd.map(k=>BD[k].ks),backgroundColor:bd.map(k=>BD[k].ks>=95?'#34c77b':(BD[k].ks>=90?'#f0a93b':'#e23b46')),borderRadius:3}]},
-  options:{responsive:true,plugins:{legend:{display:false},dl:{round:true}},
-    scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:90,minRotation:90}},y:{grid:{color:'#222'},min:80,max:100,ticks:{callback:v=>v+'%'}}}}});
+function renderDebtKPIs() {
+  const idx = getMonthIndices();
+  const mos = getMonthMos();
+  const debtLabelEl = document.getElementById('debt-month-label');
+  if (debtLabelEl) debtLabelEl.textContent =
+    selMonth === 'all' ? 'รายเดือน ม.ค.–มิ.ย. 2569' : MOS_FULL[selMonth]+' 2569';
 
-new Chart(document.getElementById('statBar'),{
-  type:'bar',
-  data:{labels:M5,datasets:[
-    {type:'bar',label:'หนี้ดี',data:SGOOD,backgroundColor:'#2b3a8f',borderRadius:3,labelColor:'#cdd4ff',labelDir:'above'},
-    {type:'line',label:'หนี้เสีย',data:SBAD,borderColor:'#e23b46',backgroundColor:'#e23b46',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#e23b46',labelDir:'above'},
-    {type:'line',label:'หนี้เสี่ยง',data:SRISK,borderColor:'#f0a93b',backgroundColor:'#f0a93b',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#f0a93b',labelDir:'below'}]},
-  options:{responsive:true,plugins:{legend:{display:false},dl:{pct:true}},scales:{y:{min:0,max:100,grid:{color:'#222'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
-new Chart(document.getElementById('zoneLine'),{type:'line',
-  data:{labels:M5,datasets:[
-    {label:'เขต1',data:Z1,borderColor:'#3b4cc0',backgroundColor:'#3b4cc0',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#6f7ed8',labelDir:'above'},
-    {label:'เขต2',data:Z2,borderColor:'#ef6b35',backgroundColor:'#ef6b35',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#ef6b35',labelDir:'above'},
-    {label:'เขต3',data:Z3,borderColor:'#34c77b',backgroundColor:'#34c77b',pointRadius:3,borderWidth:2,tension:.2,labelColor:'#34c77b',labelDir:'below'}]},
-  options:{responsive:true,plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:14,padding:10}},dl:{pct:true}},scales:{y:{min:70,max:95,grid:{color:'#222'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
+  // ฟังก์ชันสร้าง card การเก็บหนี้รายเดือน
+  function collCard(label, data68arr, data69, color) {
+    const has68 = Array.isArray(data68arr);
+    const rows = idx.map(i => {
+      const v69 = data69.pct[i];
+      if (has68) {
+        const v68 = data68arr[i];
+        const diff = (v69 - v68).toFixed(2);
+        const cls = diff >= 0 ? 'pct-good' : 'pct-bad';
+        return `<tr>
+          <td style="padding:2px 6px;font-size:11px">${mos[idx.indexOf(i)]}</td>
+          <td style="padding:2px 6px;font-size:11px;font-weight:700;color:${color}">${v69.toFixed(2)}%</td>
+          <td style="padding:2px 6px;font-size:11px;color:#94a3b8">${v68.toFixed(2)}%</td>
+          <td style="padding:2px 6px;font-size:11px" class="${cls}">${diff>=0?'+':''}${diff}%</td>
+        </tr>`;
+      } else {
+        const achC = v69>=90?'pct-good':v69>=85?'':'pct-bad';
+        return `<tr>
+          <td style="padding:2px 6px;font-size:11px">${mos[idx.indexOf(i)]}</td>
+          <td style="padding:2px 6px;font-size:11px;font-weight:700;color:${color}" class="${achC}">${v69.toFixed(2)}%</td>
+        </tr>`;
+      }
+    }).join('');
+    const latestV = data69.pct[idx[idx.length-1]];
+    const lastI = idx[idx.length-1]; const tgtV = data69.tgt ? data69.tgt[lastI] : null; const actV = data69.act ? data69.act[lastI] : null;
+    const hdrs = has68
+      ? `<td style="padding:2px 6px">2569</td><td style="padding:2px 6px">2568</td><td style="padding:2px 6px">เทียบ</td>`
+      : `<td style="padding:2px 6px">%</td>`;
+    return `
+    <div class="debt-kpi" style="min-width:200px">
+      <div class="debt-kpi-lbl">${label}</div>
+      <div class="debt-kpi-val" style="color:${color}">${latestV.toFixed(2)}%</div>
+      <div class="debt-kpi-sub">เดือนล่าสุด · ${tgtV && actV ? 'ทำได้ '+fmtN(actV)+'/'+fmtN(tgtV) : ''}</div>
+      <table style="width:100%;margin-top:8px;border-collapse:collapse">
+        <tr style="opacity:.5;font-size:10px">
+          <td style="padding:2px 6px">เดือน</td>${hdrs}
+        </tr>
+        ${rows}
+      </table>
+    </div>`;
+  }
 
-const mo=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-const y68=[93.34,92.06,92.92,90.90,91.45,90.65,90.65,92.51,91.77,90.86,82.70,93.73];
-const y69=[93.70,93.27,93.47,92.36,92.67,null,null,null,null,null,null,null];
-new Chart(document.getElementById('ksTrend'),{type:'line',
-  data:{labels:mo,datasets:[
-    {label:'2568',data:y68,borderColor:'#3b4cc0',backgroundColor:'#3b4cc0',pointRadius:3,borderWidth:2,tension:.25,labelColor:'#6f7ed8',labelDir:'below'},
-    {label:'2569',data:y69,borderColor:'#ef6b35',backgroundColor:'#ef6b35',pointRadius:3,borderWidth:2,tension:.25,labelColor:'#ef6b35',labelDir:'above',spanGaps:false},
-    {label:'Avg.2568 (91.13%)',data:mo.map(()=>91.13),borderColor:'#3b4cc0',borderDash:[5,4],borderWidth:1.5,pointRadius:0,noLabel:true},
-    {label:'Avg.2569 (93.09%)',data:mo.map(()=>93.09),borderColor:'#ef6b35',borderDash:[5,4],borderWidth:1.5,pointRadius:0,noLabel:true}]},
-  options:{responsive:true,plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:14,padding:12}},dl:{pct:true}},
-    scales:{y:{min:80,max:100,grid:{color:'#222'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
-};
-window.__onChart();
+  // ── helper: เลือกข้อมูลตาม selDistrict ──
+  function dSlice(base) {
+    if (selDistrict === 'all') return base;
+    const k = ['d1','d2','d3'][selDistrict];
+    return (base[k]) ? base[k] : base;
+  }
+  const cl  = (selBranch ? getBranchCutlineData() : null) || dSlice(CUTLINE);
+  const n16 = (selBranch ? getBranchDebt16(DEBT16_NEW_BRANCH) : null) || dSlice(DEBT16_NEW);
+  const f16 = (selBranch ? getBranchDebt16(DEBT16_FIN_BRANCH) : null) || dSlice(DEBT16_FIN);
+  const n17 = (selBranch ? getBranchDebt16(DEBT17_NEW_BRANCH) : null) || dSlice(DEBT17_NEW);
+  const f17 = (selBranch ? getBranchDebt16(DEBT17_FIN_BRANCH) : null) || dSlice(DEBT17_FIN);
+  const n712= (selBranch ? getBranchDebt16(DEBT712_NEW_BRANCH) : null) || dSlice(DEBT712_NEW);
+  const f712= (selBranch ? getBranchDebt16(DEBT712_FIN_BRANCH) : null) || dSlice(DEBT712_FIN);
+  const _dbt0 = (selDistrict === 'all') ? DEBT : (DEBT[['d1','d2','d3'][selDistrict]] || DEBT);
+  const dbt = (selBranch ? getBranchDebtStatus() : null) || _dbt0;
+
+  document.getElementById('debt-kpis').innerHTML =
+    collCard('📊 เก็บหนี้ขีดเส้น', cl.y68pct, {pct:cl.pct, tgt:cl.tgt, act:cl.act}, '#7dd3fc') +
+    collCard('🏍️ 1-6 รถใหม่', null, n16, '#a3e635') +
+    collCard('💳 1-6 ไฟแนนซ์', null, f16, '#67e8f9') +
+    collCard('🏍️ 1-7 รถใหม่', null, n17, '#6ee7b7') +
+    collCard('💳 1-7 ไฟแนนซ์', null, f17, '#fde68a') +
+    collCard('🏍️ 7-12 รถใหม่', null, n712, '#34d399') +
+    collCard('💳 7-12 ไฟแนนซ์', null, f712, '#fb923c') +
+    debtStatusCard('💚 หนี้ดี', dbt.good, '#6ee7b7', false, 83, 81) +
+    debtStatusCard('⚠️ หนี้เสี่ยง', dbt.risk, '#fcd34d', true, 5.5, 7) +
+    debtStatusCard('❌ หนี้เสีย', dbt.bad, '#f87171', true, 12, 14);
+}
+
+  // ── debtStatusCard: KPI card สำหรับ % สถานะหนี้ (รองรับ null รายเขต) ──
+  function debtStatusCard(label, pctArr, color, reverse, good, warn) {
+    const allIdx = getMonthIndices();
+    // กรอง null (เขตที่มีข้อมูลแค่บางเดือน)
+    const valid = allIdx.map(i => ({i, v:pctArr[i]})).filter(x => x.v != null);
+    if (!valid.length) {
+      return `<div class="debt-kpi" style="min-width:180px">
+        <div class="debt-kpi-lbl">${label}</div>
+        <div class="debt-kpi-val" style="color:${color}">—</div>
+        <div class="debt-kpi-sub">ไม่มีข้อมูลรายเขต/เดือนนี้</div></div>`;
+    }
+    const latestV = valid[valid.length-1].v;
+    const rows = valid.map(({i,v}) => {
+      let cls;
+      if (reverse) { cls = v<=good?'pct-good':v<=warn?'':'pct-bad'; }
+      else { cls = v>=good?'pct-good':v>=warn?'':'pct-bad'; }
+      return `<tr>
+        <td style="padding:2px 6px;font-size:11px">${MOS[i]}</td>
+        <td style="padding:2px 6px;font-size:11px;font-weight:700;color:${color}" class="${cls}">${v.toFixed(2)}%</td>
+      </tr>`;
+    }).join('');
+    const note = (valid.length < allIdx.length) ? ` · มีข้อมูล ${valid.length} เดือน` : '';
+    return `
+    <div class="debt-kpi" style="min-width:180px">
+      <div class="debt-kpi-lbl">${label}</div>
+      <div class="debt-kpi-val" style="color:${color}">${latestV.toFixed(2)}%</div>
+      <div class="debt-kpi-sub">เดือนล่าสุด · Sheet: สถานะหนี้${note}</div>
+      <table style="width:100%;margin-top:8px;border-collapse:collapse">
+        <tr style="opacity:.5;font-size:10px">
+          <td style="padding:2px 6px">เดือน</td><td style="padding:2px 6px">%</td>
+        </tr>
+        ${rows}
+      </table>
+    </div>`;
+  }
+
+function renderSidebar() {
+  const idx = getMonthIndices();
+  const revTot = sum(sliceByMonth(getDistrictRevenue()));
+  const sale69  = sum(sliceByMonth(getDistrictSales69()));
+  const profit  = sum(sliceByMonth(getDistrictProfit()));
+  const avgGood = idx.reduce((a,i)=>a+DEBT.good[i],0)/idx.length;
+  const avgBad  = idx.reduce((a,i)=>a+DEBT.bad[i],0)/idx.length;
+  const avgColl = idx.reduce((a,i)=>a+COLL.pct[i],0)/idx.length;
+
+  document.getElementById('sb-quick').innerHTML = `
+    <div class="sb-stat"><span>มูลค่าขาย</span><span class="sb-stat-val">${(revTot/1e6).toFixed(2)}M</span></div>
+    <div class="sb-stat"><span>ยอดขายรถ</span><span class="sb-stat-val">${fmtN(sale69)} คัน</span></div>
+    <div class="sb-stat"><span>กำไร</span><span class="sb-stat-val ${profit>0?'up':'down'}">${(profit/1e6).toFixed(3)}M</span></div>
+    <div class="sb-stat"><span>ศูนย์บริการ</span><span class="sb-stat-val">${(sum(sliceByMonth(SVC.y69))/1e6).toFixed(3)}M</span></div>
+    <div class="sb-stat"><span>สินเชื่อ</span><span class="sb-stat-val">${(sum(sliceByMonth(getDistrictCredit()))/1e3).toFixed(0)}K</span></div>
+  `;
+
+  // แสดงข้อมูลเดือนล่าสุด (ถ้า all = มิ.ย., ถ้าเลือกเดือน = เดือนนั้น)
+  const latestI = selMonth === 'all' ? 5 : Number(selMonth);
+  const lGood = DEBT.good[latestI], lRisk = DEBT.risk[latestI], lBad = DEBT.bad[latestI], lColl = COLL.pct[latestI];
+  const lLabel = MOS_FULL[latestI] + ' 2569';
+  document.getElementById('sb-debt').innerHTML = `
+    <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)">📅 ข้อมูลล่าสุด: ${lLabel}</div>
+    <div class="sb-stat"><span>🟢 หนี้ดี (0-2ด.)</span><span class="sb-stat-val up">${lGood.toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>🟡 หนี้เสี่ยง (3-6ด.)</span><span class="sb-stat-val warn">${lRisk.toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>🔴 หนี้เสีย (7ด.+)</span><span class="sb-stat-val down">${lBad.toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>🏍️ 1-6 รถใหม่</span><span class="sb-stat-val up">${DEBT16_NEW.pct[latestI].toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>💳 1-6 ไฟแนนซ์</span><span class="sb-stat-val up">${DEBT16_FIN.pct[latestI].toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>🏍️ 1-7 รถใหม่</span><span class="sb-stat-val up">${DEBT17_NEW.pct[latestI].toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>💳 1-7 ไฟแนนซ์</span><span class="sb-stat-val up">${DEBT17_FIN.pct[latestI].toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>🏍️ 7-12 รถใหม่</span><span class="sb-stat-val up">${DEBT712_NEW.pct[latestI].toFixed(2)}%</span></div>
+    <div class="sb-stat"><span>💳 7-12 ไฟแนนซ์</span><span class="sb-stat-val up">${DEBT712_FIN.pct[latestI].toFixed(2)}%</span></div>
+  `;
+
+  // Render district + branch buttons in sidebar
+  const dColors = ['#3b82f6','#f97316','#10b981'];
+  let distHTML = `<button class="filter-btn${selDistrict==='all'?' active':''}" onclick="setDistrict('all',this)">
+    <div class="dot" style="background:#94a3b8"></div>ทั้งหมด (3 เขต)</button>`;
+  [0,1,2].forEach(dv => {
+    const isActive = selDistrict == dv;
+    const branchKey = dv + 1;
+    distHTML += `<button class="filter-btn${isActive&&!selBranch?' active':''}" onclick="setDistrict(${dv},this)" style="margin-top:2px">
+      <div class="dot" style="background:${dColors[dv]}"></div>เขต ${dv+1}</button>`;
+    if (isActive && DISTRICT_BRANCH_NAMES[branchKey]) {
+      DISTRICT_BRANCH_NAMES[branchKey].forEach(bName => {
+        distHTML += `<button class="filter-btn${selBranch===bName?' active':''}" onclick="setBranch('${bName}')"
+          style="padding-left:22px;font-size:11px;margin-top:1px">
+          <div class="dot" style="background:${dColors[dv]};opacity:.5;width:6px;height:6px"></div>${bName}</button>`;
+      });
+    }
+  });
+  document.getElementById('sb-district').innerHTML = distHTML;
+
+  document.getElementById('hperiod').textContent = `📅 ${distLabel()} · ${monthLabel()}`;
+}
+
+function renderOverviewCharts() {
+  const idx = getMonthIndices();
+  const mos = getMonthMos();
+  const d1s = sliceByMonth(REV.d1);
+  const d2s = sliceByMonth(REV.d2);
+  const d3s = sliceByMonth(REV.d3);
+  const s69 = sliceByMonth(getDistrictSales69());
+  const s68 = sliceByMonth(getDistrictSales68());
+  const stg = sliceByMonth(getDistrictSalesTgt());
+
+  mkChart('cRevDist',{type:'bar',data:{labels:mos,datasets:[
+    {label:'เขต 1',data:selDistrict==='all'?d1s:null,backgroundColor:'#3b82f6cc',borderRadius:4},
+    {label:'เขต 2',data:selDistrict==='all'?d2s:null,backgroundColor:'#f97316cc',borderRadius:4},
+    {label:'เขต 3',data:selDistrict==='all'?d3s:null,backgroundColor:'#10b981cc',borderRadius:4},
+    {label:distLabel(),data:selDistrict!=='all'?sliceByMonth(getDistrictRevenue()):null,backgroundColor:'#2563a8cc',borderRadius:4},
+  ].filter(d=>d.data)},options:{responsive:true,plugins:{legend:{display:false}},
+    scales:{x:{stacked:selDistrict==='all',grid:{display:false}},y:{stacked:selDistrict==='all',ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':v},grid:{color:'#f1f5f9'}}}}});
+
+  mkChart('cSaleYoY',{type:'bar',data:{labels:mos,datasets:[
+    {label:'เป้า',data:stg,backgroundColor:'#1a3a6c18',borderColor:'#1a3a6c40',borderWidth:1,borderRadius:4},
+    {label:'2568',data:s68,backgroundColor:'#94a3b899',borderRadius:4},
+    {label:'2569',data:s69,backgroundColor:'#1a3a6cdd',borderRadius:4},
+  ]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f1f5f9'}}}}});
+
+
+}
+
+function renderYoYTable() {
+  const idx = getMonthIndices();
+  const revComp = [{mo:'ม.ค.',v69:12659500,v68:12680500,gr:'-0.17%'},
+                   {mo:'ก.พ.',v69:15918300,v68:13599500,gr:'+17.05%'},
+                   {mo:'มี.ค.',v69:11149200,v68:16596100,gr:'-32.82%'},
+                   {mo:'เม.ย.',v69:12630395,v68:9645900,gr:'+30.94%'},
+                   {mo:'พ.ค.',v69:15770300,v68:16191400,gr:'-2.60%'},
+                   {mo:'มิ.ย.',v69:16681300,v68:13076700,gr:'+27.57%'}];
+  const rows = idx.map(i => {
+    const s69=getDistrictSales69()[i], s68=getDistrictSales68()[i], tgt=getDistrictSalesTgt()[i];
+    const achPct=(s69/tgt*100).toFixed(1);
+    const yoyPct=((s69-s68)/s68*100);
+    const rc = revComp[i];
+    const grClass = rc.gr.startsWith('+') ? 'up' : rc.gr.startsWith('-') ? 'down' : '';
+    return `<tr>
+      <td><strong>${MOS_FULL[i]}</strong></td>
+      <td>${fmtN(tgt)}</td>
+      <td>${fmtN(s69)}</td>
+      <td><div class="pbar"><div class="pb"><div class="pbf" style="width:${Math.min(100,achPct)}%;background:${achPct>=90?'#10b981':achPct>=75?'#f59e0b':'#ef4444'}"></div></div><span class="pp ${achPct>=90?'up':achPct>=75?'warn':'down'}">${achPct}%</span></div></td>
+      <td>${fmtN(s68)}</td>
+      <td class="${yoyPct>=0?'up':'down'}">${yoyPct>=0?'▲ +':'▼ '}${Math.abs(yoyPct).toFixed(1)}%</td>
+      <td>${selDistrict==='all' && rc.v69?fmtN(rc.v69):'—'}</td>
+      <td>${selDistrict==='all' && rc.v68?fmtN(rc.v68):'—'}</td>
+      <td class="${selDistrict==='all'?grClass:''}">${selDistrict==='all'?rc.gr:'—'}</td>
+    </tr>`;
+  });
+  const totS69=sum(sliceByMonth(getDistrictSales69()));
+  const totS68=sum(sliceByMonth(getDistrictSales68()));
+  const totTgt=sum(sliceByMonth(getDistrictSalesTgt()));
+  document.getElementById('tbl-yoy').innerHTML = `
+    <div class="tbl-head"><div class="tbl-title">ยอดขาย & มูลค่าการขาย เปรียบ 2569 vs 2568</div></div>
+    <table><thead><tr>
+      <th>เดือน</th><th>เป้า 2569</th><th>ทำได้ 2569</th><th>% เป้า</th>
+      <th>ทำได้ 2568</th><th>YoY คัน</th><th>มูลค่า 2569</th><th>มูลค่า 2568</th><th>GR มูลค่า</th>
+    </tr></thead><tbody>${rows.join('')}
+    <tr class="trow"><td>รวม</td><td>${fmtN(totTgt)}</td><td>${fmtN(totS69)}</td>
+      <td><div class="pbar"><div class="pb"><div class="pbf" style="width:${Math.min(100,(totS69/totTgt*100)).toFixed(0)}%;background:#2563a8"></div></div><span class="pp">${(totS69/totTgt*100).toFixed(1)}%</span></div></td>
+      <td>${fmtN(totS68)}</td>
+      <td class="${isUp(totS69,totS68)?'up':'down'}">${yoy(totS69,totS68)}</td>
+      <td colspan="3">—</td>
+    </tr></tbody></table>`;
+}
+
+function renderSalesTab() {
+  const idx = getMonthIndices();
+  const s69=sliceByMonth(getDistrictSales69()), s68=sliceByMonth(getDistrictSales68()), stg=sliceByMonth(getDistrictSalesTgt());
+  const totS69=sum(s69), totS68=sum(s68), totTgt=sum(stg);
+  document.getElementById('sale-title').textContent = `ยอดขายรถใหม่ – ${distLabel()} · ${monthLabel()}`;
+
+  document.getElementById('kpi-sales').innerHTML = `
+    <div class="kpi blue"><div class="kpi-lbl">รวมทำได้</div><div class="kpi-val">${fmtN(totS69)}<span class="kpi-unit"> คัน</span></div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${(totS69/totTgt*100).toFixed(0)}%;background:var(--d1)"></div></div>
+      <div class="kpi-foot"><span class="badge bg-nu">เป้า ${fmtN(totTgt)}</span><span class="badge bg-nu">${(totS69/totTgt*100).toFixed(1)}%</span></div></div>
+    <div class="kpi blue"><div class="kpi-lbl">vs 2568</div><div class="kpi-val">${fmtN(totS68)}<span class="kpi-unit"> คัน</span></div>
+      <div class="kpi-foot"><span class="badge ${isUp(totS69,totS68)?'bg-up':'bg-dn'}">${yoy(totS69,totS68)}</span></div></div>
+    <div class="kpi green"><div class="kpi-lbl">เดือนดีสุด (2569)</div>
+      <div class="kpi-val">${MOS[s69.indexOf(Math.max(...s69))]}<span class="kpi-unit"> ${fmtN(Math.max(...s69))} คัน</span></div></div>
+    <div class="kpi red"><div class="kpi-lbl">เดือนต่ำสุด (2569)</div>
+      <div class="kpi-val">${MOS[s69.indexOf(Math.min(...s69))]}<span class="kpi-unit"> ${fmtN(Math.min(...s69))} คัน</span></div></div>
+  `;
+
+  mkChart('cSaleFull',{type:'bar',data:{labels:getMonthMos(),datasets:[
+    {label:'เป้า 2569',data:stg,backgroundColor:'#1a3a6c15',borderColor:'#1a3a6c40',borderWidth:1,borderRadius:4},
+    {label:'ทำได้ 2568',data:s68,backgroundColor:'#94a3b888',borderRadius:4},
+    {label:'ทำได้ 2569',data:s69,backgroundColor:'#1a3a6c',borderRadius:4},
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f1f5f9'}}}}});
+
+  renderSaleDistrictTable(idx);
+}
+
+let expandedSaleDistrict = null;
+function renderSaleDistrictTable(idx) {
+  if (!idx) { const i=getMonthIndices(); idx=i; }
+  const distColors = {1:'#3b82f6',2:'#f97316',3:'#10b981'};
+  const distData = [
+    {label:'เขต 1',data:SALE.doneD1,d:1,cls:'drow'},
+    {label:'เขต 2',data:SALE.doneD2,d:2,cls:'drow'},
+    {label:'เขต 3 *',data:SALE.doneD3,d:3,cls:'drow'},
+  ];
+
+  // แถวรวม MOTO 24
+  const tot69all=sum(idx.map(i=>SALE.y69[i])), tot68all=sum(idx.map(i=>SALE.y68[i]));
+  const yoyAll=((tot69all-tot68all)/tot68all*100);
+  let rows = `<tr class="trow"><td>รวม MOTO 24</td>${idx.map(i=>`<td>${fmtN(SALE.y69[i])}</td>`).join('')}
+    <td><strong>${fmtN(tot69all)}</strong></td>
+    <td style="color:#64748b">${fmtN(tot68all)}</td>
+    <td class="${yoyAll>=0?'up':'down'}">${yoyAll>=0?'▲ +':'▼ '}${Math.abs(yoyAll).toFixed(1)}%</td></tr>`;
+
+  distData.forEach(({label,data,d,cls}) => {
+    const isExp = expandedSaleDistrict === d;
+    const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${distColors[d]};margin-right:6px"></span>`;
+    const d68 = d===1?SALE.d1y68 : d===2?SALE.d2y68 : SALE.d3y68;
+    const t69=sum(idx.map(i=>data[i])), t68=sum(idx.map(i=>d68[i]));
+    const yD=((t69-t68)/t68*100);
+    rows += `<tr class="${cls} district-row${isExp?' expanded':''}" style="cursor:pointer" onclick="toggleSaleDistrict(${d})">
+      <td>${dot}${label}</td>
+      ${idx.map(i=>`<td>${fmtN(data[i])}</td>`).join('')}
+      <td><strong>${fmtN(t69)}</strong></td>
+      <td style="color:#64748b">${fmtN(t68)}</td>
+      <td class="${yD>=0?'up':'down'}" style="font-size:11px">${yD>=0?'▲ +':'▼ '}${Math.abs(yD).toFixed(1)}%</td>
+    </tr>`;
+    if (isExp && SALE_BRANCH[d]) {
+      SALE_BRANCH[d].forEach(b => {
+        const bSlice69 = idx.map(i=>b.d[i]);
+        const bSlice68 = b.y68 ? idx.map(i=>b.y68[i]) : null;
+        const tot69 = sum(bSlice69);
+        const tot68 = bSlice68 ? sum(bSlice68) : null;
+        const yoyPct = (tot68 && tot68>0) ? ((tot69-tot68)/tot68*100) : null;
+        const yoyTd = yoyPct!==null
+          ? `<td class="${yoyPct>=0?'up':'down'}" style="font-size:11px">${yoyPct>=0?'▲ +':'▼ '}${Math.abs(yoyPct).toFixed(0)}%</td>`
+          : `<td>—</td>`;
+        const y68Td = tot68!==null ? `<td style="color:#64748b">${fmtN(tot68)}</td>` : `<td>—</td>`;
+        rows += `<tr class="branch-row">
+          <td>&#8627; ${b.name}</td>
+          ${bSlice69.map(v=>`<td>${fmtN(v)}</td>`).join('')}
+          <td><strong>${fmtN(tot69)}</strong></td>
+          ${y68Td}${yoyTd}
+        </tr>`;
+      });
+      // แถวรวมสาขา
+      const branchTot69 = idx.map(i=>sum(SALE_BRANCH[d].map(b=>b.d[i])));
+      const branchTot68 = idx.map(i=>sum(SALE_BRANCH[d].map(b=>b.y68?b.y68[i]:0)));
+      const tot69=sum(branchTot69), tot68=sum(branchTot68);
+      const yoy68=tot68>0?((tot69-tot68)/tot68*100):null;
+      rows += `<tr class="branch-row" style="font-weight:700;background:#dbeafe">
+        <td style="padding-left:28px">รวม ${label.replace(' *','')}</td>
+        ${branchTot69.map(v=>`<td>${fmtN(v)}</td>`).join('')}
+        <td>${fmtN(tot69)}</td>
+        <td style="color:#64748b">${fmtN(tot68)}</td>
+        <td class="${yoy68!==null&&yoy68>=0?'up':'down'}">${yoy68!==null?(yoy68>=0?'▲ +':'▼ ')+Math.abs(yoy68).toFixed(0)+'%':'—'}</td>
+      </tr>`;
+    }
+  });
+
+  document.getElementById('tbl-sales-district').innerHTML = `
+    <div class="tbl-head">
+      <div class="tbl-title">ยอดขาย แยกตามเขต (คัน)</div>
+      <div style="font-size:11px;color:var(--muted)">คลิกชื่อเขตเพื่อดูรายสาขา • คอลัมน์ท้าย = รวม / 2568 รวม / YoY</div>
+    </div>
+    <table><thead><tr><th>เขต / สาขา</th>${getMonthMos().map(m=>`<th>${m}</th>`).join('')}<th>รวม 2569</th><th>รวม 2568</th><th>YoY</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderServiceTab() {
+  const idx = getMonthIndices();
+  const svc69=sliceByMonth(SVC.y69), svc68=sliceByMonth(SVC.y68), tgt=sliceByMonth(SVC.tgt69);
+  const p69=sliceByMonth(PAWN.y69), p68=sliceByMonth(PAWN.y68), pt=sliceByMonth(PAWN.tgt69);
+  const tot69=sum(svc69), tot68=sum(svc68);
+  document.getElementById('svc-title').textContent = `ศูนย์บริการ – ${distLabel()} · ${monthLabel()}`;
+
+  document.getElementById('kpi-svc').innerHTML = `
+    <div class="kpi green"><div class="kpi-lbl">ศูนย์บริการ H1 2569</div><div class="kpi-val">${(tot69/1e6).toFixed(3)}<span class="kpi-unit"> ล้าน</span></div>
+      <div class="kpi-foot"><span class="badge bg-up">${yoy(tot69,tot68)} YoY</span></div></div>
+    <div class="kpi blue"><div class="kpi-lbl">ศูนย์บริการ H1 2568</div><div class="kpi-val">${(tot68/1e6).toFixed(3)}<span class="kpi-unit"> ล้าน</span></div>
+      <div class="kpi-foot"><span class="badge bg-nu">ฐานปีก่อน</span></div></div>
+    <div class="kpi green"><div class="kpi-lbl">% เป้าเฉลี่ย</div><div class="kpi-val">${(svc69.reduce((a,v,i)=>a+v/tgt[i],0)/idx.length*100).toFixed(1)}<span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span class="badge bg-up">เกินเป้าทุกเดือน*</span></div></div>
+    <div class="kpi sky"><div class="kpi-lbl">จำนำเล่ม</div><div class="kpi-val">${fmtN(sum(p69))}<span class="kpi-unit"> เล่ม</span></div>
+      <div class="kpi-foot"><span class="badge ${isUp(sum(p69),sum(p68))?'bg-up':'bg-dn'}">${yoy(sum(p69),sum(p68))} YoY</span></div></div>
+  `;
+
+  mkChart('cSvcYoY',{type:'line',data:{labels:getMonthMos(),datasets:[
+    {label:'ทำได้ 2569',data:svc69,borderColor:'#10b981',backgroundColor:'#10b98122',fill:true,tension:.4,pointRadius:5},
+    {label:'ทำได้ 2568',data:svc68,borderColor:'#94a3b8',borderDash:[5,3],tension:.4,pointRadius:4},
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e3?(v/1e3).toFixed(0)+'K':v},grid:{color:'#f1f5f9'}}}}});
+
+  const svcRows = idx.map(i=>{
+    const pp=(svc69[i]/tgt[i]*100).toFixed(1);
+    return `<tr><td>${MOS_FULL[i]}</td><td>${fmtN(tgt[i])}</td><td>${fmtN(svc69[i])}</td>
+      <td class="${pp>=100?'up':pp>=90?'warn':'down'}">${pp}%</td>
+      <td>${fmtN(svc68[i])}</td><td class="up">${yoy(svc69[i],svc68[i])}</td></tr>`;
+  }).join('');
+  const ts69=sum(svc69),ts68=sum(svc68),tTgt=sum(tgt);
+  document.getElementById('tbl-svc').innerHTML=`
+    <div class="tbl-head"><div class="tbl-title">ยอดศูนย์บริการ (บาท)</div></div>
+    <table><thead><tr><th>เดือน</th><th>เป้า 2569</th><th>ทำได้ 2569</th><th>% เป้า</th><th>ทำได้ 2568</th><th>YoY%</th></tr></thead>
+    <tbody>${svcRows}<tr class="trow"><td>รวม</td><td>${fmtN(tTgt)}</td><td>${fmtN(ts69)}</td><td class="up">${(ts69/tTgt*100).toFixed(1)}%</td><td>${fmtN(ts68)}</td><td class="up">${yoy(ts69,ts68)}</td></tr></tbody></table>`;
+
+  const pawnRows = idx.map(i=>{
+    const pp=(p69[i]/pt[i]*100).toFixed(1);
+    const yo=((p69[i]-p68[i])/p68[i]*100);
+    return `<tr><td>${MOS_FULL[i]}</td><td>${fmtN(pt[i])}</td><td>${fmtN(p69[i])}</td>
+      <td class="${pp>=80?'up':pp>=50?'warn':'down'}">${pp}%</td>
+      <td>${fmtN(p68[i])}</td><td class="${yo>=0?'up':'down'}">${yo>=0?'▲ +':'▼ '}${Math.abs(yo).toFixed(1)}%</td></tr>`;
+  }).join('');
+  const tp69=sum(p69),tp68=sum(p68),tpt=sum(pt);
+  document.getElementById('tbl-pawn').innerHTML=`
+    <div class="tbl-head"><div class="tbl-title">ยอดจำนำเล่ม</div></div>
+    <table><thead><tr><th>เดือน</th><th>เป้า 2569</th><th>ทำได้ 2569</th><th>% เป้า</th><th>ทำได้ 2568</th><th>YoY%</th></tr></thead>
+    <tbody>${pawnRows}<tr class="trow"><td>รวม</td><td>${fmtN(tpt)}</td><td>${fmtN(tp69)}</td><td class="down">${(tp69/tpt*100).toFixed(1)}%</td><td>${fmtN(tp68)}</td><td class="up">${yoy(tp69,tp68)}</td></tr></tbody></table>`;
+}
+
+function renderFinanceTab() {
+  const idx = getMonthIndices();
+  document.getElementById('fin-title').textContent = `กำไร-ขาดทุน & สินเชื่อ – ${distLabel()} · ${monthLabel()}`;
+
+  mkChart('cProfit',{type:'bar',data:{labels:getMonthMos(),datasets:[
+    {label:'เขต 1',data:sliceByMonth(PROF.d1),backgroundColor:'#3b82f6cc',borderRadius:4},
+    {label:'เขต 2',data:sliceByMonth(PROF.d2),backgroundColor:'#f97316cc',borderRadius:4},
+    {label:'เขต 3',data:sliceByMonth(PROF.d3),backgroundColor:'#10b981cc',borderRadius:4},
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},
+    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>v>=1e3?(v/1e3).toFixed(0)+'K':v},grid:{color:'#f1f5f9'}}}}});
+
+  mkChart('cCredit',{type:'bar',data:{labels:getMonthMos(),datasets:[
+    {label:'เขต 1',data:sliceByMonth(CRED.d1),backgroundColor:'#3b82f6cc',borderRadius:4},
+    {label:'เขต 2',data:sliceByMonth(CRED.d2),backgroundColor:'#f97316cc',borderRadius:4},
+    {label:'เขต 3',data:sliceByMonth(CRED.d3),backgroundColor:'#10b981cc',borderRadius:4},
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},
+    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>v>=1e3?(v/1e3).toFixed(0)+'K':v},grid:{color:'#f1f5f9'}}}}});
+
+  const profRows = [{l:'รวม',d:PROF.tot,c:'trow'},{l:'เขต 1',d:PROF.d1,c:'drow'},{l:'เขต 2',d:PROF.d2,c:'drow'},{l:'เขต 3',d:PROF.d3,c:'drow'}];
+  const credRows = [{l:'รวม',d:CRED.tot,c:'trow'},{l:'เขต 1',d:CRED.d1,c:'drow'},{l:'เขต 2',d:CRED.d2,c:'drow'},{l:'เขต 3',d:CRED.d3,c:'drow'}];
+
+  const makeFinTable = (rows) => rows.map(({l,d,c})=>{
+    const cells=idx.map(i=>`<td class="${d[i]<0?'down':''}">${fmtN(d[i])}</td>`).join('');
+    const tot=sum(idx.map(i=>d[i]));
+    return `<tr class="${c}"><td>${l}</td>${cells}<td class="${tot<0?'down':''}">${fmtN(tot)}</td></tr>`;
+  }).join('');
+
+  document.getElementById('tbl-profit').innerHTML=`
+    <div class="tbl-head"><div class="tbl-title">กำไร-ขาดทุน (บาท)</div></div>
+    <table><thead><tr><th>เขต</th>${getMonthMos().map(m=>`<th>${m}</th>`).join('')}<th>รวม H</th></tr></thead>
+    <tbody>${makeFinTable(profRows)}</tbody></table>`;
+
+  document.getElementById('tbl-credit').innerHTML=`
+    <div class="tbl-head"><div class="tbl-title">สินเชื่อปล่อยใหม่ (บาท)</div></div>
+    <table><thead><tr><th>เขต</th>${getMonthMos().map(m=>`<th>${m}</th>`).join('')}<th>รวม H</th></tr></thead>
+    <tbody>${makeFinTable(credRows)}</tbody></table>`;
+}
+
+// ── ตัวแปรสถานะ expand เขต ──
+let expandedDistrict = null;
+
+function renderDebtTab() {
+  const idx = getMonthIndices();
+
+  ['cDebtGood','cDebtRisk','cDebtBad'].forEach(id=>destroyChart(id));
+  mkChart('cDebtGood',{type:'bar',data:{labels:getMonthMos(),datasets:[{data:sliceByMonth(DEBT.good),backgroundColor:sliceByMonth(DEBT.good).map(v=>v>=83?'#10b981cc':v>=81?'#f59e0bcc':'#ef4444cc'),borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{min:78,max:88,ticks:{callback:v=>v+'%'},grid:{color:'#f1f5f9'}}}}});
+  mkChart('cDebtRisk',{type:'bar',data:{labels:getMonthMos(),datasets:[{data:sliceByMonth(DEBT.risk),backgroundColor:'#f59e0bcc',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{min:0,max:10,ticks:{callback:v=>v+'%'},grid:{color:'#f1f5f9'}}}}});
+  mkChart('cDebtBad',{type:'bar',data:{labels:getMonthMos(),datasets:[{data:sliceByMonth(DEBT.bad),backgroundColor:sliceByMonth(DEBT.bad).map(v=>v<=12?'#f59e0bcc':'#ef4444cc'),borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{min:10,max:16,ticks:{callback:v=>v+'%'},grid:{color:'#f1f5f9'}}}}});
+
+
+
+
+
+  // ── ตารางสรุปหนี้รายเดือน ──
+  const body = idx.map(i=>{
+    const gC = DEBT.good[i]>=83?'up':DEBT.good[i]>=81?'warn':'down';
+    const bC = DEBT.bad[i]<=12?'up':DEBT.bad[i]<=13?'warn':'down';
+    const c16n = DEBT16_NEW.pct[i]>=95?'up':DEBT16_NEW.pct[i]>=90?'warn':'down';
+    const c16f = DEBT16_FIN.pct[i]>=99?'up':DEBT16_FIN.pct[i]>=95?'warn':'down';
+    const cNew = DEBT17_NEW.pct[i]>=90?'up':DEBT17_NEW.pct[i]>=85?'warn':'down';
+    const cFin = DEBT17_FIN.pct[i]>=95?'up':DEBT17_FIN.pct[i]>=90?'warn':'down';
+    const c712n = DEBT712_NEW.pct[i]>=85?'up':DEBT712_NEW.pct[i]>=80?'warn':'down';
+    const c712f = DEBT712_FIN.pct[i]>=95?'up':DEBT712_FIN.pct[i]>=90?'warn':'down';
+    return `<tr>
+      <td><strong>${MOS_FULL[i]}</strong></td>
+      <td class="${gC}">${DEBT.good[i]}%</td>
+      <td class="warn">${DEBT.risk[i]}%</td>
+      <td class="${bC}">${DEBT.bad[i]}%</td>
+      <td class="${c16n}">${DEBT16_NEW.pct[i].toFixed(2)}%</td>
+      <td class="${c16f}">${DEBT16_FIN.pct[i].toFixed(2)}%</td>
+      <td class="${cNew}">${DEBT17_NEW.pct[i].toFixed(2)}%</td>
+      <td class="${cFin}">${DEBT17_FIN.pct[i].toFixed(2)}%</td>
+      <td class="${c712n}">${DEBT712_NEW.pct[i].toFixed(2)}%</td>
+      <td class="${c712f}">${DEBT712_FIN.pct[i].toFixed(2)}%</td>
+
+    </tr>`;
+  }).join('');
+  document.getElementById('tbl-debt-body').innerHTML = body;
+
+  // ── ฟังก์ชันสร้างตารางรายงวด ──
+  function makeDebtInstTable(data, label, srcLabel) {
+    const rows = idx.map(i => {
+      const achC = data.pct[i]>=95?'up':data.pct[i]>=90?'warn':'down';
+      if (data.y68pct) {
+        const yoyC = data.pct[i]>=data.y68pct[i]?'up':'down';
+        const diff  = (data.pct[i]-data.y68pct[i]).toFixed(2);
+        return `<tr>
+          <td><strong>${MOS_FULL[i]}</strong></td>
+          <td>${fmtN(data.tgt[i])}</td>
+          <td>${fmtN(data.act[i])}</td>
+          <td class="${achC}">${data.pct[i].toFixed(2)}%</td>
+          <td>${data.y68pct[i].toFixed(2)}%</td>
+          <td class="${yoyC}">${Number(diff)>=0?'▲ +':'▼ '}${Math.abs(diff)} pp</td>
+        </tr>`;
+      } else {
+        return `<tr>
+          <td style="padding:2px 6px;font-size:11px">${mos[idx.indexOf(i)]}</td>
+          <td style="padding:2px 6px;font-size:11px;font-weight:700;color:${color}" class="${achC}">${data.pct[i].toFixed(2)}%</td>
+        </tr>`;
+      }
+    });
+    const totAct=sum(idx.map(i=>data.act[i])), totTgt=sum(idx.map(i=>data.tgt[i]));
+    const totPct=(totAct/totTgt*100).toFixed(2);
+    const avg68 = data.y68pct ? (idx.reduce((a,i)=>a+data.y68pct[i],0)/idx.length).toFixed(2)+'%' : '—';
+    rows.push(`<tr class="trow"><td>รวม/เฉลี่ย</td><td>${fmtN(totTgt)}</td><td>${fmtN(totAct)}</td>
+      <td class="${totPct>=95?'up':totPct>=90?'warn':'down'}">${totPct}%</td>
+      <td>${avg68}</td><td>—</td></tr>`);
+    return `<div class="tbl-head"><div class="tbl-title">${label}</div><div style="font-size:11px;color:var(--muted)">${srcLabel}</div></div>
+    <table><thead><tr>
+      <th>เดือน</th><th>เป้า (บัญชี)</th><th>ทำได้ (บัญชี)</th><th>% เป้า</th><th>% ปี 2568</th><th>เปลี่ยนแปลง</th>
+    </tr></thead><tbody>${rows.join('')}</tbody></table>`;
+  }
+
+  document.getElementById('tbl-debt17new').innerHTML = makeDebtInstTable(DEBT17_NEW, '🏍️ เก็บหนี้ 1-7 รถใหม่', 'Sheet: สรุป 1-7 แถวที่ 4');
+  document.getElementById('tbl-debt17fin').innerHTML = makeDebtInstTable(DEBT17_FIN, '💳 เก็บหนี้ 1-7 ไฟแนนซ์', 'Sheet: สรุป 1-7 แถวที่ 33');
+  document.getElementById('tbl-debt16new').innerHTML = makeDebtInstTable(DEBT16_NEW, '🏍️ เก็บหนี้ 1-6 รถใหม่', 'Sheet: หนี้1-6 grand total');
+  document.getElementById('tbl-debt16fin').innerHTML = makeDebtInstTable(DEBT16_FIN, '💳 เก็บหนี้ 1-6 ไฟแนนซ์', 'Sheet: หนี้1-6 grand total');
+  document.getElementById('tbl-debt712new').innerHTML = makeDebtInstTable(DEBT712_NEW, '🏍️ เก็บหนี้ 7-12 รถใหม่', 'Sheet: สรุป 7-12 grand total');
+  document.getElementById('tbl-debt712fin').innerHTML = makeDebtInstTable(DEBT712_FIN, '💳 เก็บหนี้ 7-12 ไฟแนนซ์', 'Sheet: สรุป 7-12 grand total');
+
+  // ── ตารางหนี้รายเขต + drill-down ──
+  renderDistrictDebtTable();
+}
+
+function renderDistrictDebtTable() {
+  const distColors = {1:'#3b82f6',2:'#f97316',3:'#10b981'};
+  const latestLabel = MOS_FULL[5] + ' 2569';
+
+  let html = `<div class="tbl-head"><div class="tbl-title">สถานะหนี้รายเขต – ${latestLabel}</div>
+    <div style="font-size:11px;color:var(--muted)">คลิกชื่อเขตเพื่อดูรายสาขา</div></div>
+  <table><thead><tr>
+    <th>เขต / สาขา</th><th>รวมบัญชี</th>
+    <th>หนี้ดี (&lt;3ด.)</th><th>%</th>
+    <th>หนี้เสี่ยง (3-6ด.)</th><th>%</th>
+    <th>หนี้เสีย (7ด.+)</th><th>%</th>
+  </tr></thead><tbody>`;
+
+  DEBT_DISTRICT.forEach(d => {
+    const isExp = expandedDistrict === d.d;
+    const dot = `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${distColors[d.d]};margin-right:6px"></span>`;
+    html += `<tr class="district-row${isExp?' expanded':''}" onclick="toggleDistrict(${d.d})">
+      <td>${dot}<strong>${d.name}</strong></td>
+      <td><strong>${fmtN(d.tot)}</strong></td>
+      <td>${fmtN(d.lt3)}</td><td class="pct-good">${d.lt3p.toFixed(2)}%</td>
+      <td>${fmtN(d.r36)}</td><td class="pct-risk">${d.r36p.toFixed(2)}%</td>
+      <td>${fmtN(d.b7)}</td><td class="pct-bad">${d.b7p.toFixed(2)}%</td>
+    </tr>`;
+    if (isExp && BRANCH_DISTRICT[d.d]) {
+      BRANCH_DISTRICT[d.d].forEach(b => {
+        html += `<tr class="branch-row">
+          <td>&#8627; ${b.name}</td>
+          <td>${fmtN(b.tot)}</td>
+          <td>${fmtN(b.lt3)}</td><td class="pct-good">${b.lt3p.toFixed(2)}%</td>
+          <td>${fmtN(b.r36)}</td><td class="pct-risk">${b.r36p.toFixed(2)}%</td>
+          <td>${fmtN(b.b7)}</td><td class="pct-bad">${b.b7p.toFixed(2)}%</td>
+        </tr>`;
+      });
+      const sumTot=sum(BRANCH_DISTRICT[d.d].map(b=>b.tot));
+      const sumLt3=sum(BRANCH_DISTRICT[d.d].map(b=>b.lt3));
+      const sumR36=sum(BRANCH_DISTRICT[d.d].map(b=>b.r36));
+      const sumB7 =sum(BRANCH_DISTRICT[d.d].map(b=>b.b7));
+      html += `<tr class="branch-row" style="font-weight:700;background:#dbeafe">
+        <td style="padding-left:28px">รวม ${d.name}</td>
+        <td>${fmtN(sumTot)}</td>
+        <td>${fmtN(sumLt3)}</td><td class="pct-good">${(sumLt3/sumTot*100).toFixed(2)}%</td>
+        <td>${fmtN(sumR36)}</td><td class="pct-risk">${(sumR36/sumTot*100).toFixed(2)}%</td>
+        <td>${fmtN(sumB7)}</td><td class="pct-bad">${(sumB7/sumTot*100).toFixed(2)}%</td>
+      </tr>`;
+    }
+  });
+
+  const totAll=sum(DEBT_DISTRICT.map(d=>d.tot));
+  const totLt3=sum(DEBT_DISTRICT.map(d=>d.lt3));
+  const totR36=sum(DEBT_DISTRICT.map(d=>d.r36));
+  const totB7 =sum(DEBT_DISTRICT.map(d=>d.b7));
+  html += `<tr class="trow">
+    <td>รวมทั้งหมด</td><td>${fmtN(totAll)}</td>
+    <td>${fmtN(totLt3)}</td><td class="pct-good">${(totLt3/totAll*100).toFixed(2)}%</td>
+    <td>${fmtN(totR36)}</td><td class="pct-risk">${(totR36/totAll*100).toFixed(2)}%</td>
+    <td>${fmtN(totB7)}</td><td class="pct-bad">${(totB7/totAll*100).toFixed(2)}%</td>
+    <td>${fmtN(totB7)}</td><td class="pct-bad">${(totB7/totAll*100).toFixed(2)}%</td>
+  </tr></tbody></table>`;
+  document.getElementById('tbl-debt-district').innerHTML = html;
+}
+
+function toggleDistrict(d) {
+  expandedDistrict = expandedDistrict === d ? null : d;
+  renderDistrictDebtTable();
+}
+
+function toggleSaleDistrict(d) {
+  expandedSaleDistrict = expandedSaleDistrict === d ? null : d;
+  renderSaleDistrictTable(getMonthIndices());
+}
+
+// ─── MAIN RENDER ──────────────────────────────────────────
+function renderStockSection() {
+  const el = document.getElementById('stock-zone');
+  if (!el) return;
+
+  const idx   = getMonthIndices();
+  const mos   = idx.length;
+
+  if (selBranch) {
+    // branch: already shown in top KPI card — collapse this zone
+    el.innerHTML = '';
+    return;
+  }
+
+  let html = '<div class="stock-kpi-card">';
+
+  if (selDistrict !== 'all') {
+    // ── เขตที่เลือก: per-branch comparison ──
+    const bk = Number(selDistrict) + 1;
+    const stockBranches = STOCK.branch[bk] || [];
+    const saleBranches  = SALE_BRANCH[bk]  || [];
+
+    html += `<div class="stock-total-label" style="margin-bottom:12px">${distLabel()} – สต็อก vs ยอดขาย/เดือน</div>
+      <div class="stock-branch-grid">`;
+
+    stockBranches.forEach(sb => {
+      const saleBr  = saleBranches.find(b => b.name === sb.name);
+      const brSale  = saleBr ? sum(idx.map(i => saleBr.d[i])) : 0;
+      const avgBrSale = mos > 0 ? brSale / mos : 0;
+      const cov     = avgBrSale > 0 ? sb.cnt / avgBrSale : 0;
+      const cc      = cov >= 1.5 ? 'bg-up' : cov >= 0.8 ? 'bg-wn' : 'bg-dn';
+      html += `<div class="stock-br-card" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 12px">
+        <div class="stock-br-name">${sb.name.replace(/^\d+-/, '')}</div>
+        <div style="display:flex;justify-content:space-between;width:100%;align-items:baseline;gap:6px;flex-wrap:wrap">
+          <span style="font-size:18px;font-weight:800;color:var(--accent2)">${sb.cnt}<span style="font-size:11px;font-weight:400;color:var(--muted)"> คัน</span></span>
+          <span style="font-size:11px;color:var(--muted)">~${Math.round(avgBrSale)}/ด.</span>
+          <span class="badge ${cc}">${cov.toFixed(1)}ด.</span>
+        </div>
+      </div>`;
+    });
+
+    html += '</div>';
+  } else {
+    // ── ทั้งหมด: 3-district comparison ──
+    const d3arr = idx.map(i => SALE.y69[i] - SALE.doneD1[i] - SALE.doneD2[i]);
+    const distData = [
+      {label:'เขต 1', stock:STOCK.d1, sales:sum(idx.map(i=>SALE.doneD1[i])), color:'var(--d1)'},
+      {label:'เขต 2', stock:STOCK.d2, sales:sum(idx.map(i=>SALE.doneD2[i])), color:'var(--d2)'},
+      {label:'เขต 3', stock:STOCK.d3, sales:sum(d3arr),                       color:'var(--d3)'},
+    ];
+
+    html += `<div class="stock-total-label" style="margin-bottom:12px">เปรียบเทียบสต็อก vs ยอดขาย/เดือน</div>
+      <div class="stock-chips">`;
+
+    distData.forEach(d => {
+      const avgD  = mos > 0 ? d.sales / mos : 0;
+      const cov   = avgD > 0 ? d.stock / avgD : 0;
+      const cc    = cov >= 1.5 ? 'bg-up' : cov >= 0.8 ? 'bg-wn' : 'bg-dn';
+      html += `<div class="stock-chip" style="border-top:3px solid ${d.color};min-width:110px;flex:1;gap:4px">
+        <span class="stock-chip-lbl">${d.label}</span>
+        <span class="stock-chip-num">${d.stock}</span>
+        <span class="stock-chip-pct">คัน</span>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">ขาย ~${Math.round(avgD)}/เดือน</div>
+        <span class="badge ${cc}" style="margin-top:3px">${cov.toFixed(1)} เดือน</span>
+      </div>`;
+    });
+
+    html += '</div>';
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderAll() {
+  renderMainKPIs();
+  renderDebtKPIs();
+  renderSidebar();
+  renderOverviewCharts();
+  renderYoYTable();
+  renderSaleDistrictTable(getMonthIndices());
+  renderDistrictDebtTable();
+  renderSvcTable();
+  renderFinTable();
+  renderStockSection();
+}
+function setMonth(m, el) {
+  selMonth = m;
+  document.querySelectorAll('.month-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderAll();
+}
+function setDistrict(d, el) {
+  selDistrict = d;
+  selBranch = null;
+  renderAll();
+}
+function setBranch(b) {
+  selBranch = b;
+  renderAll();
+}
+function showTab(name, el) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+renderAll();
 </script>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                    
